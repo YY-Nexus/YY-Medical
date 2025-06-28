@@ -74,3 +74,9 @@ export function AnimatedLogo({ className, size = "md" }: Pick<LogoProps, "classN
     </div>
   )
 }
+
+// 添加缺失的 BrandLogo 导出（作为 Logo 的别名）
+export const BrandLogo = Logo
+
+// 默认导出
+export default Logo

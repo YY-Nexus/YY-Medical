@@ -1,6 +1,6 @@
 import type { GuideStep, ChatMessage, KnowledgeItem, QuickQuestion } from "@/types/admin-guide"
 
-class AdminGuideService {
+export class AdminGuideService {
   private guideSteps: GuideStep[] = [
     {
       id: "system-overview",
@@ -478,4 +478,8 @@ class AdminGuideService {
   }
 }
 
+// 创建单例实例并导出
 export const adminGuideService = new AdminGuideService()
+
+// 默认导出
+export default AdminGuideService

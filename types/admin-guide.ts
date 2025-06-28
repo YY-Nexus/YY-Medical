@@ -11,7 +11,7 @@ export interface GuideStep {
 }
 
 export interface GuideAction {
-  type: "navigate" | "configure" | "test" | "verify"
+  type: "navigate" | "test" | "verify" | "configure"
   label: string
   url?: string
   description: string
@@ -22,12 +22,20 @@ export interface ChatMessage {
   role: "user" | "assistant"
   content: string
   timestamp: Date
-  type?: "text" | "quick-reply" | "guide-link"
+  type: "text" | "image" | "file"
   metadata?: {
-    guideStep?: string
-    category?: string
     confidence?: number
+    category?: string
+    relatedGuides?: string[]
   }
+}
+
+export interface QuickQuestion {
+  id: string
+  question: string
+  category: string
+  answer: string
+  relatedGuides: string[]
 }
 
 export interface KnowledgeItem {
@@ -41,10 +49,8 @@ export interface KnowledgeItem {
   lastUpdated: Date
 }
 
-export interface QuickQuestion {
-  id: string
-  question: string
-  category: string
-  answer: string
-  relatedGuides: string[]
+export interface GuideProgress {
+  completed: number
+  total: number
+  percentage: number
 }
