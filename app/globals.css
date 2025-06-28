@@ -1,0 +1,281 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* 医疗主题色彩变量 */
+  --medical-primary: #2563eb;
+  --medical-primary-light: #3b82f6;
+  --medical-secondary: #38bdf8;
+  --medical-secondary-light: #0ea5e9;
+  --medical-accent: #06b6d4;
+  --medical-background: #f8fafc;
+  --medical-surface: #ffffff;
+  --medical-text: #1e293b;
+  --medical-text-light: #64748b;
+
+  /* 渐变色彩 */
+  --medical-gradient-primary: linear-gradient(135deg, #2563eb 0%, #38bdf8 50%, #06b6d4 100%);
+  --medical-gradient-light: linear-gradient(135deg, #f1f5f9 0%, #e0f2fe 50%, #f0f9ff 100%);
+  --medical-gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
+
+  /* 阴影效果 */
+  --medical-shadow-sm: 0 1px 2px 0 rgba(37, 99, 235, 0.05);
+  --medical-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1), 0 2px 4px -1px rgba(37, 99, 235, 0.06);
+  --medical-shadow-lg: 0 10px 15px -3px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05);
+  --medical-shadow-xl: 0 20px 25px -5px rgba(37, 99, 235, 0.1), 0 10px 10px -5px rgba(37, 99, 235, 0.04);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* 医疗主题样式 */
+  .medical-gradient-bg {
+    background: var(--medical-gradient-primary);
+  }
+
+  .medical-gradient-light {
+    background: var(--medical-gradient-light);
+  }
+
+  .medical-card {
+    background: var(--medical-gradient-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--medical-shadow-lg);
+  }
+
+  .medical-glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* 医疗按钮样式 */
+  .medical-btn-primary {
+    @apply bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-medium px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105;
+  }
+
+  .medical-btn-secondary {
+    @apply bg-gradient-to-r from-slate-100 to-blue-50 hover:from-slate-200 hover:to-blue-100 text-blue-700 font-medium px-6 py-3 rounded-lg border border-blue-200 hover:border-blue-300 transition-all duration-200;
+  }
+
+  /* 医疗输入框样式 */
+  .medical-input {
+    @apply bg-white/80 backdrop-blur-sm border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 rounded-lg px-4 py-3 transition-all duration-200;
+  }
+
+  /* 医疗卡片样式 */
+  .medical-card-hover {
+    @apply hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300;
+  }
+
+  /* 医疗文本样式 */
+  .medical-text-gradient {
+    @apply bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent;
+  }
+
+  /* 医疗边框样式 */
+  .medical-border {
+    @apply border-blue-200 hover:border-blue-300 transition-colors duration-200;
+  }
+
+  /* 医疗背景动画 */
+  .medical-bg-animated {
+    background: linear-gradient(-45deg, #f1f5f9, #e0f2fe, #f0f9ff, #fafafa);
+    background-size: 400% 400%;
+    animation: medicalGradient 15s ease infinite;
+  }
+
+  @keyframes medicalGradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* 医疗脉冲动画 */
+  .medical-pulse {
+    animation: medicalPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes medicalPulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  /* 医疗加载动画 */
+  .medical-loading {
+    @apply animate-spin rounded-full border-4 border-blue-200 border-t-blue-600;
+  }
+
+  /* 医疗成功状态 */
+  .medical-success {
+    @apply bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 text-emerald-800;
+  }
+
+  /* 医疗警告状态 */
+  .medical-warning {
+    @apply bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200 text-amber-800;
+  }
+
+  /* 医疗错误状态 */
+  .medical-error {
+    @apply bg-gradient-to-r from-red-50 to-rose-50 border-red-200 text-red-800;
+  }
+
+  /* 医疗信息状态 */
+  .medical-info {
+    @apply bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200 text-blue-800;
+  }
+}
+
+@layer components {
+  /* 医疗组件样式 */
+  .medical-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .medical-section {
+    @apply py-12 lg:py-16;
+  }
+
+  .medical-heading {
+    @apply text-3xl lg:text-4xl font-bold medical-text-gradient mb-6;
+  }
+
+  .medical-subheading {
+    @apply text-xl lg:text-2xl font-semibold text-slate-700 mb-4;
+  }
+
+  .medical-description {
+    @apply text-lg text-slate-600 leading-relaxed;
+  }
+
+  /* 医疗导航样式 */
+  .medical-nav {
+    @apply bg-white/90 backdrop-blur-md border-b border-blue-100 shadow-sm;
+  }
+
+  .medical-nav-item {
+    @apply text-slate-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200;
+  }
+
+  .medical-nav-item-active {
+    @apply bg-blue-50 text-blue-700 medical-nav-item;
+  }
+
+  /* 医疗侧边栏样式 */
+  .medical-sidebar {
+    @apply bg-white/95 backdrop-blur-sm border-r border-blue-100 shadow-sm;
+  }
+
+  .medical-sidebar-item {
+    @apply flex items-center px-4 py-3 text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200;
+  }
+
+  .medical-sidebar-item-active {
+    @apply bg-blue-100 text-blue-800 border-r-2 border-blue-600 medical-sidebar-item;
+  }
+
+  /* 医疗表格样式 */
+  .medical-table {
+    @apply bg-white rounded-lg shadow-sm border border-blue-100 overflow-hidden;
+  }
+
+  .medical-table-header {
+    @apply bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-100;
+  }
+
+  .medical-table-row {
+    @apply border-b border-blue-50 hover:bg-blue-25 transition-colors duration-150;
+  }
+
+  /* 医疗模态框样式 */
+  .medical-modal {
+    @apply bg-white rounded-xl shadow-2xl border border-blue-100 max-w-lg w-full mx-4;
+  }
+
+  .medical-modal-header {
+    @apply px-6 py-4 border-b border-blue-100 bg-gradient-to-r from-blue-50 to-cyan-50;
+  }
+
+  .medical-modal-body {
+    @apply px-6 py-4;
+  }
+
+  .medical-modal-footer {
+    @apply px-6 py-4 border-t border-blue-100 bg-slate-50 flex justify-end space-x-3;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .medical-container {
+    @apply px-3;
+  }
+
+  .medical-heading {
+    @apply text-2xl lg:text-3xl;
+  }
+
+  .medical-subheading {
+    @apply text-lg lg:text-xl;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .medical-gradient-bg,
+  .medical-gradient-light {
+    background: white !important;
+    color: black !important;
+  }
+
+  .medical-card {
+    background: white !important;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  :root {
+    --medical-primary: #1e40af;
+    --medical-secondary: #0369a1;
+    --medical-text: #000000;
+  }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  .medical-bg-animated,
+  .medical-pulse,
+  .medical-loading {
+    animation: none !important;
+  }
+
+  .medical-card-hover {
+    transform: none !important;
+  }
+}

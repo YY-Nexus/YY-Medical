@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "deployment-check": "node deployment-check.js"
+  }
+}
