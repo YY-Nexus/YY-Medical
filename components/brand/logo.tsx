@@ -1,82 +1,50 @@
 "use client"
 
-import Image from "next/image"
+import { Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface LogoProps {
-  className?: string
   size?: "sm" | "md" | "lg" | "xl"
-  showText?: boolean
-  variant?: "default" | "white" | "dark"
+  animated?: boolean
+  className?: string
 }
 
-const sizeClasses = {
-  sm: "h-8 w-8",
-  md: "h-12 w-12",
-  lg: "h-16 w-16",
-  xl: "h-24 w-24",
-}
+export function Logo({ size = "md", animated = false, className }: LogoProps) {
+  const sizeClasses = {
+    sm: "w-8 h-8",
+    md: "w-12 h-12",
+    lg: "w-16 h-16",
+    xl: "w-20 h-20",
+  }
 
-const textSizeClasses = {
-  sm: "text-sm",
-  md: "text-lg",
-  lg: "text-xl",
-  xl: "text-2xl",
-}
+  const iconSizes = {
+    sm: "h-4 w-4",
+    md: "h-6 w-6",
+    lg: "h-8 w-8",
+    xl: "h-10 w-10",
+  }
 
-export function Logo({ className, size = "md", showText = true, variant = "default" }: LogoProps) {
   return (
-    <div className={cn("flex items-center gap-3", className)}>
-      <div className={cn("relative flex-shrink-0", sizeClasses[size])}>
-        <Image src="/images/yanyu-cloud-logo.png" alt="言语云³医疗AI系统" fill className="object-contain" priority />
-      </div>
-
-      {showText && (
-        <div className="flex flex-col">
-          <span
-            className={cn(
-              "font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent",
-              textSizeClasses[size],
-            )}
-          >
-            言语云³
-          </span>
-          <span
-            className={cn(
-              "text-xs text-muted-foreground -mt-1",
-              size === "sm" && "text-[10px]",
-              size === "xl" && "text-sm",
-            )}
-          >
-            医疗AI智能诊疗系统
-          </span>
-        </div>
+    <div
+      className={cn(
+        "relative flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg",
+        sizeClasses[size],
+        animated && "animate-pulse",
+        className,
       )}
+    >
+      {/* 背景光晕效果 */}
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-400 opacity-75 blur-sm"></div>
+
+      {/* 主图标 */}
+      <Shield className={cn("relative z-10 text-white drop-shadow-sm", iconSizes[size])} />
+
+      {/* 装饰性小点 */}
+      <div className="absolute top-1 right-1 w-1 h-1 bg-white rounded-full opacity-80"></div>
+      <div className="absolute bottom-1 left-1 w-0.5 h-0.5 bg-white rounded-full opacity-60"></div>
+
+      {/* 动画光环 */}
+      {animated && <div className="absolute inset-0 rounded-xl border-2 border-white/30 animate-ping"></div>}
     </div>
   )
 }
-
-// 简化版Logo（仅图标）
-export function LogoIcon({ className, size = "md" }: Pick<LogoProps, "className" | "size">) {
-  return (
-    <div className={cn("relative flex-shrink-0", sizeClasses[size], className)}>
-      <Image src="/images/yanyu-cloud-logo.png" alt="言语云³" fill className="object-contain" priority />
-    </div>
-  )
-}
-
-// 带动画效果的Logo
-export function AnimatedLogo({ className, size = "md" }: Pick<LogoProps, "className" | "size">) {
-  return (
-    <div className={cn("relative flex-shrink-0 transition-transform hover:scale-110", sizeClasses[size], className)}>
-      <Image src="/images/yanyu-cloud-logo.png" alt="言语云³" fill className="object-contain drop-shadow-lg" priority />
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full animate-pulse" />
-    </div>
-  )
-}
-
-// 添加缺失的 BrandLogo 导出（作为 Logo 的别名）
-export const BrandLogo = Logo
-
-// 默认导出
-export default Logo

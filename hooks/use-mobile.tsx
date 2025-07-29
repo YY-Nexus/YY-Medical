@@ -1,29 +1,21 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import * as React from "react"
+
+const MOBILE_BREAKPOINT = 768
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
-  useEffect(() => {
-    // 初始检查
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+  React.useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+    const onChange = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }
-
-    // 首次运行
-    checkIfMobile()
-
-    // 监听窗口大小变化
-    window.addEventListener("resize", checkIfMobile)
-
-    // 清理
-    return () => {
-      window.removeEventListener("resize", checkIfMobile)
-    }
+    mql.addEventListener("change", onChange)
+    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    return () => mql.removeEventListener("change", onChange)
   }, [])
 
-  return isMobile
+  return !!isMobile
 }
-
-export const useMobile = useIsMobile

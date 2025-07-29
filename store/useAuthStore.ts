@@ -3,11 +3,11 @@ import { persist } from "zustand/middleware"
 
 interface User {
   id: string
-  email: string
   name: string
+  email: string
+  phone: string
   role: string
-  department?: string
-  avatar?: string
+  createdAt: string
 }
 
 interface AuthState {
@@ -15,12 +15,10 @@ interface AuthState {
   token: string | null
   isAuthenticated: boolean
   isLoading: boolean
-  error: string | null
-  login: (email: string, password: string) => Promise<void>
+  login: (token: string, user: User) => void
   logout: () => void
-  refreshToken: () => Promise<boolean>
-  updateUser: (userData: Partial<User>) => void
-  clearError: () => void
+  updateUser: (user: Partial<User>) => void
+  setLoading: (loading: boolean) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -30,108 +28,39 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       isLoading: false,
-      error: null,
 
-      login: async (email: string, password: string) => {
-        set({ isLoading: true, error: null })
-
-        try {
-          const response = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-          })
-
-          const data = await response.json()
-
-          if (!response.ok) {
-            throw new Error(data.message || "登录失败")
-          }
-
-          // 设置认证状态
-          set({
-            user: data.user,
-            token: data.token,
-            isAuthenticated: true,
-            isLoading: false,
-          })
-
-          // 设置 cookie (在实际应用中，这通常由服务器设置)
-          document.cookie = `auth-token=${data.token}; path=/; max-age=${60 * 60 * 24}; SameSite=Strict`
-        } catch (error) {
-          set({
-            isLoading: false,
-            error: error instanceof Error ? error.message : "登录过程中发生错误",
-          })
-          throw error
-        }
+      login: (token: string, user: User) => {
+        set({
+          token,
+          user,
+          isAuthenticated: true,
+          isLoading: false,
+        })
       },
 
       logout: () => {
-        // 清除认证状态
         set({
           user: null,
           token: null,
           isAuthenticated: false,
+          isLoading: false,
         })
-
-        // 清除 cookie
-        document.cookie = "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+        // 清除本地存储
+        localStorage.removeItem("token")
+        localStorage.removeItem("user")
       },
 
-      refreshToken: async () => {
-        const { token } = get()
-
-        if (!token) {
-          return false
-        }
-
-        try {
-          const response = await fetch("/api/auth/refresh", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-
-          const data = await response.json()
-
-          if (!response.ok) {
-            throw new Error(data.message || "刷新令牌失败")
-          }
-
-          // 更新令牌
+      updateUser: (userData: Partial<User>) => {
+        const currentUser = get().user
+        if (currentUser) {
           set({
-            token: data.token,
-            isAuthenticated: true,
+            user: { ...currentUser, ...userData },
           })
-
-          // 更新 cookie
-          document.cookie = `auth-token=${data.token}; path=/; max-age=${60 * 60 * 24}; SameSite=Strict`
-
-          return true
-        } catch (error) {
-          console.error("刷新令牌错误:", error)
-          return false
         }
       },
 
-      updateUser: (userData) => {
-        const { user } = get()
-
-        if (!user) {
-          return
-        }
-
-        set({
-          user: { ...user, ...userData },
-        })
-      },
-
-      clearError: () => {
-        set({ error: null })
+      setLoading: (loading: boolean) => {
+        set({ isLoading: loading })
       },
     }),
     {

@@ -14,16 +14,13 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
   const [isLoading, setIsLoading] = useState(true)
   const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false)
 
-  // 简化加载逻辑，快速完成初始化
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        // 模拟必要的初始化，但不要太长
         await new Promise((resolve) => setTimeout(resolve, 800))
         setIsLoading(false)
       } catch (error) {
         console.error("应用初始化失败:", error)
-        // 即使出错也要结束加载状态
         setIsLoading(false)
       }
     }
@@ -31,7 +28,6 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
     initializeApp()
   }, [])
 
-  // 延迟显示性能监控
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_SHOW_PERFORMANCE_MONITOR === "true") {
       const timer = setTimeout(() => {
@@ -41,7 +37,6 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
     }
   }, [])
 
-  // 如果还在加载，显示简化的加载界面
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-50">

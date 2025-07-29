@@ -1,17 +1,16 @@
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm"
-import { TermsFooter } from "@/components/auth/TermsFooter"
-import type { Metadata } from "next"
-
-export const metadata: Metadata = {
-  title: "忘记密码 - MediNexus³",
-  description: "重置您的 MediNexus³ 账号密码",
-}
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="w-full max-w-md">
-      <ForgotPasswordForm />
-      <TermsFooter />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-100 p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">找回密码</h1>
+          <p className="text-gray-600">重置您的账户密码</p>
+        </div>
+
+        <ForgotPasswordForm />
+      </div>
     </div>
   )
 }

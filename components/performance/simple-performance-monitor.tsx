@@ -1,65 +1,93 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { X, Activity } from "lucide-react"
 
+interface PerformanceMetrics {
+  memory: number
+  loadTime: number
+  fps: number
+  timestamp: number
+}
+
 export function SimplePerformanceMonitor() {
+  const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null)
   const [isVisible, setIsVisible] = useState(true)
-  const [memoryUsage, setMemoryUsage] = useState<number | null>(null)
-  const [domNodes, setDomNodes] = useState<number | null>(null)
+  const [isMinimized, setIsMinimized] = useState(false)
 
   useEffect(() => {
-    // 确保只在客户端运行
-    if (typeof window === "undefined") return
+    if (!isVisible) return
 
-    // 初始收集
-    collectMetrics()
+    const updateMetrics = () => {
+      const memory = (performance as any).memory?.usedJSHeapSize || 0
+      const loadTime = performance.now()
 
-    // 定期更新
-    const intervalId = setInterval(collectMetrics, 5000)
-
-    return () => {
-      clearInterval(intervalId)
+      setMetrics({
+        memory: Math.round((memory / 1024 / 1024) * 100) / 100,
+        loadTime: Math.round(loadTime),
+        fps: 60, // 简化的FPS值
+        timestamp: Date.now(),
+      })
     }
-  }, [])
 
-  const collectMetrics = () => {
-    // 获取DOM节点数量
-    setDomNodes(document.querySelectorAll("*").length)
+    updateMetrics()
+    const interval = setInterval(updateMetrics, 2000)
 
-    // 获取内存使用情况（如果可用）
-    if (performance && (performance as any).memory) {
-      setMemoryUsage(Math.round((performance as any).memory.usedJSHeapSize / (1024 * 1024)))
-    }
-  }
+    return () => clearInterval(interval)
+  }, [isVisible])
 
   if (!isVisible) return null
 
+  if (isMinimized) {
+    return (
+      <div className="fixed bottom-4 right-4 z-50">
+        <Button onClick={() => setIsMinimized(false)} size="icon" variant="outline" className="bg-white shadow-lg">
+          <Activity className="h-4 w-4" />
+        </Button>
+      </div>
+    )
+  }
+
   return (
-    <div className="fixed bottom-0 right-0 z-50 p-2 bg-white border border-medical-200 rounded-tl-lg shadow-lg text-xs">
-      <div className="flex justify-between items-center mb-1">
-        <div className="font-bold flex items-center text-medical-700">
-          <Activity className="w-3 h-3 mr-1" />
-          性能监控
-        </div>
-        <button
-          onClick={() => setIsVisible(false)}
-          className="text-gray-500 hover:text-gray-700"
-          aria-label="关闭性能监控"
-        >
-          <X className="w-3 h-3" />
-        </button>
-      </div>
-      <div className="grid grid-cols-1 gap-y-1">
-        <div className="flex items-center">
-          <span className="text-gray-600">DOM节点:</span>
-          <span className="ml-1 font-mono">{domNodes !== null ? domNodes : "测量中..."}</span>
-        </div>
-        <div className="flex items-center">
-          <span className="text-gray-600">内存使用:</span>
-          <span className="ml-1 font-mono">{memoryUsage !== null ? `${memoryUsage}MB` : "不可用"}</span>
-        </div>
-      </div>
+    <div className="fixed bottom-4 right-4 z-50">
+      <Card className="w-64 bg-white shadow-lg">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm">性能监控</CardTitle>
+            <div className="flex gap-1">
+              <Button onClick={() => setIsMinimized(true)} size="icon" variant="ghost" className="h-6 w-6">
+                <span className="text-xs">−</span>
+              </Button>
+              <Button onClick={() => setIsVisible(false)} size="icon" variant="ghost" className="h-6 w-6">
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0">
+          {metrics && (
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span>内存使用:</span>
+                <span className="font-mono">{metrics.memory} MB</span>
+              </div>
+              <div className="flex justify-between">
+                <span>加载时间:</span>
+                <span className="font-mono">{metrics.loadTime} ms</span>
+              </div>
+              <div className="flex justify-between">
+                <span>帧率:</span>
+                <span className="font-mono">{metrics.fps} FPS</span>
+              </div>
+              <div className="text-xs text-gray-500 mt-2">
+                更新时间: {new Date(metrics.timestamp).toLocaleTimeString()}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

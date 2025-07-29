@@ -2,52 +2,94 @@
 
 import type React from "react"
 
-import { useEffect } from "react"
-import { useRouter, usePathname } from "next/navigation"
-import { useAuth } from "@/hooks/useAuth"
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { useAuthStore } from "@/store/useAuthStore"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface AuthGuardProps {
   children: React.ReactNode
-  requiredRoles?: string[]
-  redirectTo?: string
+  requireAuth?: boolean
+  requiredRole?: string
+  fallback?: React.ReactNode
 }
 
-export function AuthGuard({ children, requiredRoles = [], redirectTo = "/login" }: AuthGuardProps) {
-  const { isAuthenticated, isLoading, user, hasPermission } = useAuth()
+export function AuthGuard({ children, requireAuth = true, requiredRole, fallback }: AuthGuardProps) {
+  const { isAuthenticated, user, token, setLoading } = useAuthStore()
+  const [isChecking, setIsChecking] = useState(true)
   const router = useRouter()
-  const pathname = usePathname()
 
   useEffect(() => {
-    // 如果不在加载中且未认证，重定向到登录页
-    if (!isLoading && !isAuthenticated) {
-      router.push(`${redirectTo}?returnUrl=${encodeURIComponent(pathname)}`)
-      return
+    const checkAuth = async () => {
+      setLoading(true)
+
+      // 检查本地存储的token
+      const storedToken = localStorage.getItem("token")
+      const storedUser = localStorage.getItem("user")
+
+      if (storedToken && storedUser) {
+        try {
+          // 验证token是否有效
+          const response = await fetch("/api/auth/verify", {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          })
+
+          if (!response.ok) {
+            // Token无效，清除存储
+            localStorage.removeItem("token")
+            localStorage.removeItem("user")
+            useAuthStore.getState().logout()
+          }
+        } catch (error) {
+          console.error("Token verification failed:", error)
+          useAuthStore.getState().logout()
+        }
+      }
+
+      setIsChecking(false)
+      setLoading(false)
     }
 
-    // 如果已认证但没有所需角色权限，重定向到首页或其他页面
-    if (!isLoading && isAuthenticated && requiredRoles.length > 0) {
-      const hasRequiredRole = requiredRoles.some((role) => hasPermission(role))
-      if (!hasRequiredRole) {
+    checkAuth()
+  }, [setLoading])
+
+  useEffect(() => {
+    if (!isChecking) {
+      if (requireAuth && !isAuthenticated) {
+        router.push("/login")
+        return
+      }
+
+      if (requiredRole && user?.role !== requiredRole) {
         router.push("/unauthorized")
+        return
       }
     }
-  }, [isLoading, isAuthenticated, user, hasPermission, requiredRoles, router, pathname, redirectTo])
+  }, [isChecking, requireAuth, isAuthenticated, requiredRole, user, router])
 
-  // 加载中显示加载状态
-  if (isLoading) {
+  if (isChecking) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
-      </div>
+      fallback || (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="space-y-4 w-full max-w-md">
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        </div>
+      )
     )
   }
 
-  // 未认证或无权限时不渲染子组件
-  if (!isAuthenticated || (requiredRoles.length > 0 && !requiredRoles.some((role) => hasPermission(role)))) {
+  if (requireAuth && !isAuthenticated) {
     return null
   }
 
-  // 已认证且有权限，渲染子组件
+  if (requiredRole && user?.role !== requiredRole) {
+    return null
+  }
+
   return <>{children}</>
 }

@@ -1,101 +1,43 @@
-import { NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
+import { verify } from "jsonwebtoken"
+import bcrypt from "bcryptjs"
 
-// 模拟用户数据库
-// 实际项目中应连接到真实数据库
-const users = [
-  {
-    id: "1",
-    email: "doctor@medinexus.com",
-    password: "password123", // 实际项目中应存储哈希值
-    name: "张医生",
-    role: "doctor",
-    department: "内科",
-    avatar: "/avatars/doctor.png",
-  },
-  // 其他用户...
-]
-
-// 模拟重置令牌存储
-// 实际项目中应存储在数据库中
-const resetTokens: Record<string, { email: string; expires: number }> = {}
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { email } = body
+    const { token, password } = await request.json()
 
-    // 验证请求数据
-    if (!email) {
-      return NextResponse.json({ message: "请提供邮箱地址" }, { status: 400 })
+    // 验证输入
+    if (!token || !password) {
+      return NextResponse.json({ message: "令牌和密码不能为空" }, { status: 400 })
     }
 
-    // 查找用户
-    const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase())
+    // 验证密码强度
+    if (password.length < 8) {
+      return NextResponse.json({ message: "密码长度至少8位" }, { status: 400 })
+    }
 
-    // 即使用户不存在，也返回成功以防止邮箱枚举攻击
-    if (!user) {
+    try {
+      // 验证重置令牌
+      const decoded = verify(token, process.env.JWT_SECRET || "your-secret-key") as any
+
+      if (decoded.type !== "password-reset") {
+        return NextResponse.json({ message: "无效的重置令牌" }, { status: 400 })
+      }
+
+      // 加密新密码
+      const hashedPassword = await bcrypt.hash(password, 10)
+
+      // 实际应用中应更新数据库中的用户密码
+      console.log(`更新用户 ${decoded.email} 的密码`)
+
       return NextResponse.json({
-        message: "如果该邮箱已注册，您将收到重置密码的邮件",
+        message: "密码重置成功",
       })
+    } catch (tokenError) {
+      return NextResponse.json({ message: "重置令牌已过期或无效" }, { status: 400 })
     }
-
-    // 生成重置令牌
-    const resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-
-    // 存储重置令牌（有效期1小时）
-    resetTokens[resetToken] = {
-      email: user.email,
-      expires: Date.now() + 60 * 60 * 1000,
-    }
-
-    // 在实际项目中，这里应该发送包含重置链接的邮件
-    // sendResetEmail(user.email, `https://yourdomain.com/reset-password?token=${resetToken}`)
-
-    // 返回成功消息
-    return NextResponse.json({
-      message: "如果该邮箱已注册，您将收到重置密码的邮件",
-    })
   } catch (error) {
-    console.error("密码重置请求错误:", error)
-    return NextResponse.json({ message: "处理密码重置请求时发生错误" }, { status: 500 })
-  }
-}
-
-export async function PUT(request: Request) {
-  try {
-    const body = await request.json()
-    const { token, newPassword } = body
-
-    // 验证请求数据
-    if (!token || !newPassword) {
-      return NextResponse.json({ message: "请提供令牌和新密码" }, { status: 400 })
-    }
-
-    // 验证令牌
-    const resetData = resetTokens[token]
-    if (!resetData || resetData.expires < Date.now()) {
-      return NextResponse.json({ message: "无效或已过期的重置令牌" }, { status: 400 })
-    }
-
-    // 查找用户
-    const userIndex = users.findIndex((u) => u.email.toLowerCase() === resetData.email.toLowerCase())
-
-    if (userIndex === -1) {
-      return NextResponse.json({ message: "用户不存在" }, { status: 404 })
-    }
-
-    // 更新密码
-    users[userIndex].password = newPassword // 实际项目中应哈希处理
-
-    // 删除使用过的令牌
-    delete resetTokens[token]
-
-    // 返回成功消息
-    return NextResponse.json({
-      message: "密码已成功重置",
-    })
-  } catch (error) {
-    console.error("密码重置错误:", error)
-    return NextResponse.json({ message: "重置密码时发生错误" }, { status: 500 })
+    console.error("Reset password error:", error)
+    return NextResponse.json({ message: "服务器错误" }, { status: 500 })
   }
 }

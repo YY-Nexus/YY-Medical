@@ -1,64 +1,53 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { WifiOff, Wifi } from "lucide-react"
 import { useOfflineStatus } from "@/hooks/use-offline-status"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { WifiOff, Wifi, AlertTriangle } from "lucide-react"
+import { useEffect, useState } from "react"
 
 export function OfflineNotification() {
-  const { isOffline, offlineMessage, setOfflineMessage } = useOfflineStatus()
-  const [visible, setVisible] = useState(false)
+  const { isOnline, wasOffline } = useOfflineStatus()
+  const [showReconnected, setShowReconnected] = useState(false)
 
-  // 控制通知显示
   useEffect(() => {
-    if (offlineMessage) {
-      setVisible(true)
-
-      // 如果是在线消息，5秒后自动隐藏
-      if (!isOffline) {
-        const timer = setTimeout(() => {
-          setVisible(false)
-        }, 5000)
-        return () => clearTimeout(timer)
-      }
-    } else {
-      setVisible(false)
+    if (isOnline && wasOffline) {
+      setShowReconnected(true)
+      const timer = setTimeout(() => {
+        setShowReconnected(false)
+      }, 5000)
+      return () => clearTimeout(timer)
     }
-  }, [offlineMessage, isOffline])
+  }, [isOnline, wasOffline])
 
-  // 关闭通知
-  const handleClose = () => {
-    setVisible(false)
-    if (!isOffline) {
-      setOfflineMessage(null)
-    }
+  if (isOnline && !showReconnected) {
+    return null
   }
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -100, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          className={`fixed top-0 left-0 right-0 z-50 mx-auto max-w-md px-4 py-3 mt-4 rounded-lg shadow-lg flex items-center ${
-            isOffline ? "bg-red-500" : "bg-green-500"
-          } text-white`}
-        >
-          <div className="mr-3">{isOffline ? <WifiOff className="h-5 w-5" /> : <Wifi className="h-5 w-5" />}</div>
-          <div className="flex-1">{offlineMessage}</div>
-          <button
-            onClick={handleClose}
-            className="ml-3 p-1 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors"
-            aria-label="关闭通知"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className="fixed top-4 right-4 z-50 max-w-sm">
+      {!isOnline ? (
+        <Alert className="border-yellow-200 bg-yellow-50">
+          <WifiOff className="h-4 w-4 text-yellow-600" />
+          <AlertDescription className="text-yellow-800">
+            <div className="flex items-center justify-between">
+              <span>您当前处于离线状态</span>
+              <AlertTriangle className="h-4 w-4 ml-2" />
+            </div>
+            <p className="text-xs mt-1 text-yellow-700">部分功能可能受限，数据将在重新连接后同步</p>
+          </AlertDescription>
+        </Alert>
+      ) : showReconnected ? (
+        <Alert className="border-green-200 bg-green-50">
+          <Wifi className="h-4 w-4 text-green-600" />
+          <AlertDescription className="text-green-800">
+            <div className="flex items-center justify-between">
+              <span>网络连接已恢复</span>
+              <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse ml-2" />
+            </div>
+            <p className="text-xs mt-1 text-green-700">正在同步离线期间的数据...</p>
+          </AlertDescription>
+        </Alert>
+      ) : null}
+    </div>
   )
 }

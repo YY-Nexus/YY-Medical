@@ -1,88 +1,114 @@
-import { NextResponse } from "next/server"
-import { SignJWT } from "jose"
-import { getJwtSecretKey } from "@/lib/auth/jwt"
+import { type NextRequest, NextResponse } from "next/server"
+import jwt from "jsonwebtoken"
 
 // 模拟用户数据库
-// 实际项目中应连接到真实数据库
 const users = [
   {
-    id: "1",
-    email: "doctor@medinexus.com",
-    password: "password123", // 实际项目中应存储哈希值
+    id: 1,
+    email: "admin@yanyucloud.com",
+    password: "admin123",
+    name: "系统管理员",
+    role: "admin",
+    department: "信息科",
+    status: "active",
+  },
+  {
+    id: 2,
+    email: "doctor@yanyucloud.com",
+    password: "doctor123",
     name: "张医生",
     role: "doctor",
     department: "内科",
-    avatar: "/avatars/doctor.png",
+    status: "active",
   },
   {
-    id: "2",
-    email: "admin@medinexus.com",
-    password: "admin123",
-    name: "李管理员",
-    role: "admin",
-    avatar: "/avatars/admin.png",
-  },
-  {
-    id: "3",
-    email: "researcher@medinexus.com",
-    password: "research123",
-    name: "王研究员",
-    role: "researcher",
-    department: "研发部",
-    avatar: "/avatars/researcher.png",
-  },
-  {
-    id: "4",
-    email: "china@0379.email",
-    password: "My151001", // 注意大小写
-    name: "系统管理员",
-    role: "admin",
-    avatar: "/avatars/admin.png",
+    id: 3,
+    email: "nurse@yanyucloud.com",
+    password: "nurse123",
+    name: "李护士",
+    role: "nurse",
+    department: "护理部",
+    status: "active",
   },
 ]
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { email, password } = body
+    const { email, password } = await request.json()
 
-    // 验证请求数据
+    // 验证输入
     if (!email || !password) {
-      return NextResponse.json({ message: "邮箱和密码不能为空" }, { status: 400 })
+      return NextResponse.json(
+        {
+          message: "邮箱和密码不能为空",
+          code: "MISSING_FIELDS",
+        },
+        { status: 400 },
+      )
     }
 
     // 查找用户
-    const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase())
+    const user = users.find((u) => u.email === email)
 
-    // 验证用户存在和密码正确
-    if (!user || user.password !== password) {
-      return NextResponse.json({ message: "邮箱或密码不正确" }, { status: 401 })
+    if (!user) {
+      return NextResponse.json(
+        {
+          message: "邮箱地址不存在",
+          code: "INVALID_EMAIL",
+        },
+        { status: 401 },
+      )
     }
 
-    // 创建用户对象（不包含密码）
-    const userWithoutPassword = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      department: user.department,
-      avatar: user.avatar,
+    // 检查账户状态
+    if (user.status !== "active") {
+      return NextResponse.json(
+        {
+          message: "账户已被禁用，请联系管理员",
+          code: "ACCOUNT_DISABLED",
+        },
+        { status: 403 },
+      )
     }
 
-    // 使用 jose 库生成 JWT 令牌
-    const token = await new SignJWT({ ...userWithoutPassword })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime("24h")
-      .sign(getJwtSecretKey())
+    // 验证密码
+    if (user.password !== password) {
+      return NextResponse.json(
+        {
+          message: "密码错误",
+          code: "INVALID_PASSWORD",
+        },
+        { status: 401 },
+      )
+    }
 
-    // 返回用户信息和令牌
+    // 生成JWT token
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET || "your-secret-key",
+      { expiresIn: "24h" },
+    )
+
+    // 返回用户信息（不包含密码）
+    const { password: _, ...userWithoutPassword } = user
+
     return NextResponse.json({
-      user: userWithoutPassword,
+      message: "登录成功",
       token,
+      user: userWithoutPassword,
     })
   } catch (error) {
-    console.error("登录错误:", error)
-    return NextResponse.json({ message: "登录过程中发生错误" }, { status: 500 })
+    console.error("Login error:", error)
+    return NextResponse.json(
+      {
+        message: "API endpoint not implemented in demo version",
+        code: "INTERNAL_ERROR",
+      },
+      { status: 501 },
+    )
   }
 }

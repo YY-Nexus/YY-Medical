@@ -1,100 +1,72 @@
-import { NextResponse } from "next/server"
-import { SignJWT } from "jose"
-import { getJwtSecretKey } from "@/lib/auth/jwt"
+import { type NextRequest, NextResponse } from "next/server"
+import bcrypt from "bcryptjs"
+import { v4 as uuidv4 } from "uuid"
 
-// 模拟用户数据库
-// 实际项目中应连接到真实数据库
-const users = [
-  {
-    id: "1",
-    email: "doctor@medinexus.com",
-    password: "password123", // 实际项目中应存储哈希值
-    name: "张医生",
-    role: "doctor",
-    department: "内科",
-    avatar: "/avatars/doctor.png",
-  },
-  {
-    id: "2",
-    email: "admin@medinexus.com",
-    password: "admin123",
-    name: "李管理员",
-    role: "admin",
-    avatar: "/avatars/admin.png",
-  },
-  {
-    id: "3",
-    email: "researcher@medinexus.com",
-    password: "research123",
-    name: "王研究员",
-    role: "researcher",
-    department: "研发部",
-    avatar: "/avatars/researcher.png",
-  },
-  {
-    id: "4",
-    email: "china@0379.email",
-    password: "My151001", // 注意大小写
-    name: "系统管理员",
-    role: "admin",
-    avatar: "/avatars/admin.png",
-  },
-  // 其他用户...
-]
+// 模拟用户数据库（实际应用中应使用真实数据库）
+const users: any[] = []
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { email, password, name, role, department } = body
+    const { name, email, phone, password } = await request.json()
 
-    // 验证请求数据
-    if (!email || !password || !name || !role) {
-      return NextResponse.json({ message: "请提供所有必填字段" }, { status: 400 })
+    // 验证输入
+    if (!name || !email || !phone || !password) {
+      return NextResponse.json({ message: "所有字段都是必填的" }, { status: 400 })
     }
 
-    // 检查邮箱是否已存在
-    if (users.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
-      return NextResponse.json({ message: "该邮箱已被注册" }, { status: 409 })
+    // 验证邮箱格式
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ message: "邮箱格式不正确" }, { status: 400 })
     }
+
+    // 验证手机号格式
+    const phoneRegex = /^1[3-9]\d{9}$/
+    if (!phoneRegex.test(phone)) {
+      return NextResponse.json({ message: "手机号格式不正确" }, { status: 400 })
+    }
+
+    // 验证密码强度
+    if (password.length < 8) {
+      return NextResponse.json({ message: "密码长度至少8位" }, { status: 400 })
+    }
+
+    // 检查用户是否已存在
+    const existingUser = users.find((u) => u.email === email || u.phone === phone)
+    if (existingUser) {
+      return NextResponse.json({ message: "邮箱或手机号已被注册" }, { status: 409 })
+    }
+
+    // 加密密码
+    const hashedPassword = await bcrypt.hash(password, 10)
 
     // 创建新用户
     const newUser = {
-      id: (users.length + 1).toString(),
-      email,
-      password, // 实际项目中应哈希处理
+      id: uuidv4(),
       name,
-      role,
-      department,
-      avatar: `/avatars/${role}.png`, // 默认头像
+      email,
+      phone,
+      password: hashedPassword,
+      role: "user",
+      createdAt: new Date().toISOString(),
+      emailVerified: false,
     }
 
-    // 添加到用户数组（模拟数据库插入）
+    // 保存用户（实际应用中应保存到数据库）
     users.push(newUser)
 
-    // 创建用户对象（不包含密码）
-    const userWithoutPassword = {
-      id: newUser.id,
-      email: newUser.email,
-      name: newUser.name,
-      role: newUser.role,
-      department: newUser.department,
-      avatar: newUser.avatar,
-    }
+    // 返回成功响应（不包含密码）
+    const { password: _, ...userWithoutPassword } = newUser
 
-    // 生成JWT令牌
-    const token = await new SignJWT({ ...userWithoutPassword })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime("24h")
-      .sign(getJwtSecretKey())
-
-    // 返回用户信息和令牌
-    return NextResponse.json({
-      user: userWithoutPassword,
-      token,
-    })
+    return NextResponse.json(
+      {
+        message: "注册成功",
+        user: userWithoutPassword,
+      },
+      { status: 201 },
+    )
   } catch (error) {
-    console.error("注册错误:", error)
-    return NextResponse.json({ message: "注册过程中发生错误" }, { status: 500 })
+    console.error("Registration error:", error)
+    return NextResponse.json({ message: "服务器错误" }, { status: 500 })
   }
 }
