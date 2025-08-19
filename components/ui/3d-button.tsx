@@ -83,16 +83,34 @@ const Button3d = React.forwardRef<HTMLButtonElement, Button3dProps>(
     const Comp = asChild ? Slot : "button"
     const [isPressed, setIsPressed] = React.useState(false)
 
-    // 添加键盘支持
+    // 添加键盘支持和改进的事件处理
     const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (e.key === "Enter" || e.key === " ") {
+      if ((e.key === "Enter" || e.key === " ") && !disabled && !isLoading) {
         e.preventDefault()
         setIsPressed(true)
       }
     }
 
     const handleKeyUp = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (e.key === "Enter" || e.key === " ") {
+      if ((e.key === "Enter" || e.key === " ") && !disabled && !isLoading) {
+        setIsPressed(false)
+      }
+    }
+
+    const handleMouseDown = () => {
+      if (!disabled && !isLoading) {
+        setIsPressed(true)
+      }
+    }
+
+    const handleMouseUp = () => {
+      if (!disabled && !isLoading) {
+        setIsPressed(false)
+      }
+    }
+
+    const handleMouseLeave = () => {
+      if (isPressed && !disabled && !isLoading) {
         setIsPressed(false)
       }
     }
@@ -102,12 +120,13 @@ const Button3d = React.forwardRef<HTMLButtonElement, Button3dProps>(
         className={cn(button3dVariants({ variant, size, rounded, animation, className }))}
         ref={ref}
         disabled={disabled || isLoading}
-        onMouseDown={() => setIsPressed(true)}
-        onMouseUp={() => setIsPressed(false)}
-        onMouseLeave={() => isPressed && setIsPressed(false)}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
         aria-busy={isLoading}
+        aria-disabled={disabled || isLoading}
         {...props}
       >
         <span className={cn("flex items-center justify-center", isPressed ? "transform translate-y-[1px]" : "")}>
