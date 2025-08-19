@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -153,19 +153,50 @@ export function BatchProcessor() {
   const [selectedCount, setSelectedCount] = useState(0)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
+  // 使用 ref 来存储定时器 ID，避免内存泄漏
+  const uploadIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const processIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  // 清理定时器的函数
+  const clearTimers = useCallback(() => {
+    if (uploadIntervalRef.current) {
+      clearInterval(uploadIntervalRef.current)
+      uploadIntervalRef.current = null
+    }
+    if (processIntervalRef.current) {
+      clearInterval(processIntervalRef.current)
+      processIntervalRef.current = null
+    }
+  }, [])
+
+  // 组件卸载时清理定时器
+  useEffect(() => {
+    return () => {
+      clearTimers()
+    }
+  }, [clearTimers])
+
   // 处理文件上传
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files
     if (!fileList || fileList.length === 0) return
 
+    // 清理之前的定时器
+    if (uploadIntervalRef.current) {
+      clearInterval(uploadIntervalRef.current)
+    }
+
     setIsUploading(true)
     setUploadProgress(0)
 
     // 模拟上传进度
-    const interval = setInterval(() => {
+    uploadIntervalRef.current = setInterval(() => {
       setUploadProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(interval)
+          if (uploadIntervalRef.current) {
+            clearInterval(uploadIntervalRef.current)
+            uploadIntervalRef.current = null
+          }
           setTimeout(() => {
             const newFiles = Array.from(fileList).map((file, index) => ({
               id: `file-${Date.now()}-${index}`,
@@ -229,9 +260,18 @@ export function BatchProcessor() {
     // 模拟处理进度
     let processed = 0
     const totalFiles = files.length
-    const processInterval = setInterval(() => {
+    
+    // 清理之前的处理定时器
+    if (processIntervalRef.current) {
+      clearInterval(processIntervalRef.current)
+    }
+    
+    processIntervalRef.current = setInterval(() => {
       if (processed >= totalFiles) {
-        clearInterval(processInterval)
+        if (processIntervalRef.current) {
+          clearInterval(processIntervalRef.current)
+          processIntervalRef.current = null
+        }
 
         // 更新任务状态
         setCurrentTask((prev) => {

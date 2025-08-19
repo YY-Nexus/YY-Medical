@@ -8,10 +8,22 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-empty-function": "warn",
+    "@typescript-eslint/prefer-const": "error",
+    "@typescript-eslint/no-var-requires": "error",
+    "@typescript-eslint/no-inferrable-types": "error",
+    "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
+    "react/display-name": "warn",
+    "react/jsx-key": "error",
+    "react/jsx-no-duplicate-props": "error",
+    "react/jsx-no-undef": "error",
     "prefer-const": "error",
-    "no-var": "error"
+    "no-var": "error",
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-debugger": "error",
+    "no-duplicate-imports": "error",
+    "no-unused-expressions": "error"
   },
-  "ignorePatterns": ["node_modules/", ".next/", "out/", "dist/"]
+  "ignorePatterns": ["node_modules/", ".next/", "out/", "dist/", "cypress/"]
 }
