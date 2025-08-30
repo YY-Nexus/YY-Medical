@@ -37,6 +37,7 @@ import {
   Layers,
   Clock,
 } from "lucide-react"
+import { useAutomaticExecution } from "@/contexts/automatic-execution-context"
 
 // 模拟批处理任务
 const mockBatchTasks = [
@@ -152,6 +153,8 @@ export function BatchProcessor() {
   const [selectAll, setSelectAll] = useState(false)
   const [selectedCount, setSelectedCount] = useState(0)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  
+  const { consentGiven, requestConsent } = useAutomaticExecution()
 
   // 处理文件上传
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -848,9 +851,22 @@ export function BatchProcessor() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="auto-verify">需要人工审核</Label>
-                <Checkbox id="auto-verify" defaultChecked />
+                <Checkbox 
+                  id="auto-verify" 
+                  checked={!consentGiven}
+                  onCheckedChange={(checked) => {
+                    if (!checked && !consentGiven) {
+                      requestConsent()
+                    }
+                  }}
+                />
               </div>
-              <p className="text-sm text-gray-500">OCR识别结果需要经过人工审核后才能保存到系统</p>
+              <p className="text-sm text-gray-500">
+                {consentGiven 
+                  ? "OCR识别结果将自动处理，无需人工审核（可在设置中调整）" 
+                  : "OCR识别结果需要经过人工审核后才能保存到系统"
+                }
+              </p>
             </div>
           </div>
           <DialogFooter>
