@@ -20,7 +20,7 @@
     "analyze": "cross-env ANALYZE=true npm run build"
   },
   "dependencies": {
-    "next": "^14.0.4",
+    "next": "^15.4.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "@types/node": "^20.10.5",
