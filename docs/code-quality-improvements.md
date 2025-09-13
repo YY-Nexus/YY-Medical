@@ -12,13 +12,13 @@
 - **package.json**: 移除了不存在的依赖包，修复了版本冲突
 
 #### 具体修改：
-```typescript
+\`\`\`typescript
 // 修复前
 return <Component {...props} />
 
 // 修复后
 return React.createElement(Component, props)
-```
+\`\`\`
 
 ### 2. 错误处理改进
 
@@ -34,7 +34,7 @@ return React.createElement(Component, props)
 ### 3. 类型安全改进
 
 #### 新增类型定义：
-```typescript
+\`\`\`typescript
 interface Patient {
   id: string
   name: string
@@ -59,7 +59,7 @@ interface ApiResponse<T> {
   success: boolean
   message?: string
 }
-```
+\`\`\`
 
 ### 4. 代码结构优化
 
