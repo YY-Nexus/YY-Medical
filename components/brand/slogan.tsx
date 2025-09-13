@@ -1,24 +1,30 @@
+"use client"
+
+import { useLanguage } from "@/contexts/language-context"
 import { cn } from "@/lib/utils"
 
 interface SloganProps {
-  variant?: "technical" | "patient"
   className?: string
+  variant?: "default" | "hero" | "footer"
 }
 
-export function BrandSlogan({ variant = "technical", className }: SloganProps) {
+export function Slogan({ className, variant = "default" }: SloganProps) {
+  const { language } = useLanguage()
+
+  const slogans = {
+    "zh-CN": "言启立方于万象，语枢智云守健康",
+    "en-US": "Words Initiate Cube Amid Vast Scenarios, Language Serves as Core, Smart Cloud Guards Health",
+  }
+
+  const variantStyles = {
+    default: "text-base text-muted-foreground",
+    hero: "text-lg md:text-xl text-blue-600 dark:text-blue-400 font-medium",
+    footer: "text-sm text-blue-200/80",
+  }
+
   return (
-    <div className={cn("p-3 rounded-lg", className)}>
-      {variant === "technical" ? (
-        <p className="text-center font-medium">
-          <span className="medical-gradient-text">³维精准：</span>
-          1mm病灶识别、3秒AI初诊、30年临床知识库
-        </p>
-      ) : (
-        <p className="text-center font-medium">
-          <span className="medical-gradient-text">言语医心，³度关怀</span>
-          ——从精准诊疗到有温度的健康守护
-        </p>
-      )}
-    </div>
+    <p className={cn(variantStyles[variant], className)}>
+      {slogans[language as keyof typeof slogans] || slogans["zh-CN"]}
+    </p>
   )
 }

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Shield, Brain, Users, Activity, Stethoscope, Database, ChevronRight, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { Logo } from "@/components/brand/logo"
+import { Slogan } from "@/components/brand/slogan"
 
 export default function HomePage() {
   return (
@@ -11,13 +12,7 @@ export default function HomePage() {
       <header className="border-b border-blue-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Logo size="md" animated={true} />
-              <div>
-                <h1 className="text-xl font-bold text-blue-800">言语云³</h1>
-                <p className="text-sm text-blue-600">YanYu Cloud</p>
-              </div>
-            </div>
+            <Logo size="md" animated={true} showText={true} />
             <div className="flex items-center space-x-4">
               <Link href="/login">
                 <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50 bg-transparent">
@@ -38,12 +33,15 @@ export default function HomePage() {
         <div className="text-center mb-16">
           <div className="flex justify-center mb-8">
             <div className="relative">
-              <Logo size="xl" animated={true} />
+              <Logo size="xl" animated={true} showText={false} />
               <div className="absolute -inset-4 bg-blue-400/20 rounded-full blur-xl animate-pulse"></div>
             </div>
           </div>
 
-          <h1 className="text-5xl font-bold text-blue-800 mb-6">言语云³医疗AI系统</h1>
+          <h1 className="text-5xl font-bold text-blue-800 mb-4">YYC³医疗AI系统</h1>
+          <div className="mb-6">
+            <Slogan variant="hero" className="max-w-4xl mx-auto" />
+          </div>
 
           <p className="text-xl text-blue-600 mb-8 max-w-3xl mx-auto leading-relaxed">
             融合人工智能与医疗专业知识，为医疗机构提供智能化、安全可靠的诊疗管理解决方案
@@ -148,13 +146,8 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <Logo size="sm" />
-                <div>
-                  <h3 className="font-bold">言语云³</h3>
-                  <p className="text-sm text-blue-200">YanYu Cloud</p>
-                </div>
-              </div>
+              <Logo size="sm" showText={true} className="mb-4" />
+              <Slogan variant="footer" className="mb-4" />
               <p className="text-blue-200 text-sm">专业的医疗AI管理系统，为医疗机构提供智能化解决方案。</p>
             </div>
             <div>
@@ -186,7 +179,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t border-blue-700 mt-8 pt-8 text-center text-sm text-blue-200">
-            <p>© 2024 言语云³医疗AI系统. 保留所有权利.</p>
+            <p>© 2024 YYC³医疗AI系统. 保留所有权利.</p>
           </div>
         </div>
       </footer>

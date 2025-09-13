@@ -1,72 +1,34 @@
 {
-  "name": "言语云³医疗AI系统",
-  "short_name": "言语云³",
-  "description": "领先的医疗AI智能诊断平台，提供全方位医疗信息化解决方案",
+  "name": "YYC³-Med | AI-Powered Intelligent Medical System",
+  "short_name": "YYC³-Med",
+  "description": "言启立方于万象，语枢智云守健康 - 领先的医疗AI智能诊断平台",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "orientation": "portrait-primary",
-  "scope": "/",
-  "lang": "zh-CN",
-  "dir": "ltr",
-  "categories": ["health", "medical", "productivity"],
-  "screenshots": [
-    {
-      "src": "/images/screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "桌面版截图"
-    },
-    {
-      "src": "/images/screenshot-mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "移动版截图"
-    }
-  ],
   "icons": [
     {
-      "src": "/images/yanyu-cloud-logo.png",
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/logo-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "maskable any"
     },
     {
-      "src": "/images/yanyu-cloud-logo.png",
+      "src": "/logo-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable any"
     }
   ],
-  "shortcuts": [
-    {
-      "name": "AI诊断",
-      "short_name": "诊断",
-      "description": "快速进入AI智能诊断",
-      "url": "/ai-diagnosis",
-      "icons": [
-        {
-          "src": "/images/yanyu-cloud-logo.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "患者管理",
-      "short_name": "患者",
-      "description": "管理患者信息",
-      "url": "/patients",
-      "icons": [
-        {
-          "src": "/images/yanyu-cloud-logo.png",
-          "sizes": "96x96"
-        }
-      ]
-    }
-  ],
-  "related_applications": [],
+  "categories": ["medical", "healthcare", "productivity"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "scope": "/",
   "prefer_related_applications": false
 }
