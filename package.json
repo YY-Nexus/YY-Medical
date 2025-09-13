@@ -49,7 +49,7 @@
     "zustand": "^4.4.7",
     "react-hook-form": "^7.48.2",
     "zod": "^3.22.4",
-    "axios": "^1.6.2",
+    "axios": "^1.12.0",
     "framer-motion": "^10.16.16",
     "react-hot-toast": "^2.4.1"
   },
