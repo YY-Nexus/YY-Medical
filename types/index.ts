@@ -1,0 +1,12 @@
+// 类型定义统一导出文件
+export * from "./admin-guide"
+export * from "./ai-models"
+export * from "./api-config"
+export * from "./avatar-presets"
+export * from "./case-library"
+export * from "./certifications"
+export * from "./imaging-features"
+export * from "./knowledge-base"
+export * from "./knowledge-graph"
+export * from "./medical-records"
+export * from "./verification-statistics"
