@@ -1,0 +1,8 @@
+{
+  "name": "mobile",
+  "private": true,
+  "version": "1.0.0",
+  "description": "YYC³-Med React Native App",
+  "dependencies": {},
+  "devDependencies": {}
+}

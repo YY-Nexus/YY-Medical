@@ -12,10 +12,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useAutomaticExecution } from "@/contexts/automatic-execution-context"
 
 export function TaskScheduler() {
   const [date, setDate] = useState<Date>()
   const [activeTab, setActiveTab] = useState("simple")
+  
+  const { consentGiven, requestConsent } = useAutomaticExecution()
 
   return (
     <div className="space-y-6">
@@ -196,12 +199,20 @@ export function TaskScheduler() {
                     </label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="option-retry" />
+                    <Checkbox 
+                      id="option-retry" 
+                      checked={consentGiven}
+                      onCheckedChange={(checked) => {
+                        if (checked && !consentGiven) {
+                          requestConsent()
+                        }
+                      }}
+                    />
                     <label
                       htmlFor="option-retry"
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      失败自动重试
+                      失败自动重试 {!consentGiven && "(需要启用自动执行)"}
                     </label>
                   </div>
                   <div className="flex items-center space-x-2">

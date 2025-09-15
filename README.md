@@ -213,6 +213,6 @@ MIT License
 ## 📞 支持
 
 如有问题，请联系：
-- 邮箱: support@yanyu-medical.com
+- 邮箱: admin@0379.email
 - 文档: [项目文档](./docs/)
 - Issues: [GitHub Issues](./issues)

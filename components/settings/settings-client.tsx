@@ -8,7 +8,9 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
-import { Moon, Sun, Eye, Zap, Clock, Laptop } from "lucide-react"
+import { Moon, Sun, Eye, Zap, Clock, Laptop, Bot, Shield } from "lucide-react"
+import { useAutomaticExecution } from "@/contexts/automatic-execution-context"
+import { AutomaticExecutionConsent } from "@/components/ui/automatic-execution-consent"
 
 export function SettingsClient() {
   const [settings, setSettings] = useState({
@@ -24,18 +26,50 @@ export function SettingsClient() {
     dataRefreshInterval: 60,
   })
 
+  const {
+    consentGiven,
+    setConsentGiven,
+    showConsentDialog,
+    setShowConsentDialog,
+    requestConsent,
+  } = useAutomaticExecution()
+
   const handleChange = (field: string, value: any) => {
     setSettings((prev) => ({ ...prev, [field]: value }))
   }
 
+  const handleAutoSaveToggle = (checked: boolean) => {
+    if (checked && !consentGiven) {
+      requestConsent()
+      return
+    }
+    handleChange("autoSave", checked)
+  }
+
+  const handleAutomaticExecutionToggle = (checked: boolean) => {
+    if (checked && !consentGiven) {
+      requestConsent()
+    } else {
+      setConsentGiven(checked)
+    }
+  }
+
   return (
-    <Tabs defaultValue="appearance" className="space-y-4">
-      <TabsList>
-        <TabsTrigger value="appearance">外观</TabsTrigger>
-        <TabsTrigger value="language">语言与区域</TabsTrigger>
-        <TabsTrigger value="performance">性能</TabsTrigger>
-        <TabsTrigger value="advanced">高级设置</TabsTrigger>
-      </TabsList>
+    <>
+      <AutomaticExecutionConsent
+        open={showConsentDialog}
+        onOpenChange={setShowConsentDialog}
+        onConsent={setConsentGiven}
+      />
+      
+      <Tabs defaultValue="appearance" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="appearance">外观</TabsTrigger>
+          <TabsTrigger value="language">语言与区域</TabsTrigger>
+          <TabsTrigger value="performance">性能</TabsTrigger>
+          <TabsTrigger value="automation">自动执行</TabsTrigger>
+          <TabsTrigger value="advanced">高级设置</TabsTrigger>
+        </TabsList>
 
       <TabsContent value="appearance">
         <Card>
@@ -301,10 +335,114 @@ export function SettingsClient() {
                 </div>
                 <Switch
                   id="auto-save"
-                  checked={settings.autoSave}
-                  onCheckedChange={(checked) => handleChange("autoSave", checked)}
+                  checked={settings.autoSave && consentGiven}
+                  onCheckedChange={handleAutoSaveToggle}
                 />
               </div>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button>保存设置</Button>
+          </CardFooter>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="automation">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bot className="h-5 w-5" />
+              自动执行设置
+            </CardTitle>
+            <CardDescription>管理系统自动执行功能的开启和配置</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <Shield className="h-5 w-5 mr-3 text-medical-500" />
+                  <div>
+                    <Label htmlFor="automatic-execution">启用自动执行</Label>
+                    <p className="text-sm text-muted-foreground">
+                      允许系统自动执行各种任务，提高工作效率
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  id="automatic-execution"
+                  checked={consentGiven}
+                  onCheckedChange={handleAutomaticExecutionToggle}
+                />
+              </div>
+
+              {consentGiven && (
+                <div className="space-y-4 pl-8 border-l-2 border-gray-100">
+                  <h4 className="font-medium text-sm text-gray-700">已启用的自动功能：</h4>
+                  
+                  <div className="grid gap-3">
+                    <div className="flex items-center justify-between py-2">
+                      <div>
+                        <Label className="font-medium">自动保存</Label>
+                        <p className="text-sm text-muted-foreground">自动保存表单和编辑内容</p>
+                      </div>
+                      <Switch
+                        checked={settings.autoSave}
+                        onCheckedChange={(checked) => handleChange("autoSave", checked)}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between py-2">
+                      <div>
+                        <Label className="font-medium">OCR自动处理</Label>
+                        <p className="text-sm text-muted-foreground">OCR识别结果自动处理，减少人工审核</p>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+
+                    <div className="flex items-center justify-between py-2">
+                      <div>
+                        <Label className="font-medium">任务自动重试</Label>
+                        <p className="text-sm text-muted-foreground">任务失败时自动重试执行</p>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+
+                    <div className="flex items-center justify-between py-2">
+                      <div>
+                        <Label className="font-medium">自动备份</Label>
+                        <p className="text-sm text-muted-foreground">定期自动备份系统数据</p>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+
+                    <div className="flex items-center justify-between py-2">
+                      <div>
+                        <Label className="font-medium">资质自动验证</Label>
+                        <p className="text-sm text-muted-foreground">上传资质后自动发送验证请求</p>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {!consentGiven && (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <div className="text-center space-y-2">
+                    <Bot className="h-8 w-8 mx-auto text-gray-400" />
+                    <p className="text-sm text-gray-600">
+                      请启用自动执行功能以配置各项自动化设置
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowConsentDialog(true)}
+                    >
+                      启用自动执行
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
           <CardFooter className="flex justify-end">
@@ -380,5 +518,6 @@ export function SettingsClient() {
         </Card>
       </TabsContent>
     </Tabs>
+    </>
   )
 }

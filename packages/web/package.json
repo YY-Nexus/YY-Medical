@@ -1,0 +1,8 @@
+{
+  "name": "web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "YYC³-Med Web 前端",
+  "dependencies": {},
+  "devDependencies": {}
+}
