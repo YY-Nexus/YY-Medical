@@ -1,7 +1,7 @@
 {
   "name": "YYC³-Med | AI-Powered Intelligent Medical System",
   "short_name": "YYC³-Med",
-  "description": "言启立方于万象，语枢智云守健康 - 领先的医疗AI智能诊断平台",
+  "description": "AI-powered intelligent medical system providing diagnostic assistance, case analysis, and knowledge graph capabilities",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -26,9 +26,22 @@
       "purpose": "maskable any"
     }
   ],
-  "categories": ["medical", "healthcare", "productivity"],
+  "categories": ["health", "medical", "productivity"],
   "lang": "zh-CN",
   "dir": "ltr",
   "scope": "/",
-  "prefer_related_applications": false
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
 }

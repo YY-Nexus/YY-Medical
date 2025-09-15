@@ -5,26 +5,32 @@ import { cn } from "@/lib/utils"
 
 interface SloganProps {
   className?: string
-  variant?: "default" | "hero" | "footer"
+  size?: "sm" | "md" | "lg"
+  align?: "left" | "center" | "right"
 }
 
-export function Slogan({ className, variant = "default" }: SloganProps) {
+const slogans = {
+  zh: "言启立方于万象，语枢智云守健康",
+  en: "Words Initiate Cube Amid Vast Scenarios, Language Serves as Core, Smart Cloud Guards Health",
+}
+
+const sizeMap = {
+  sm: "text-sm",
+  md: "text-base",
+  lg: "text-lg",
+}
+
+const alignMap = {
+  left: "text-left",
+  center: "text-center",
+  right: "text-right",
+}
+
+export function Slogan({ className, size = "md", align = "center" }: SloganProps) {
   const { language } = useLanguage()
+  const slogan = slogans[language as keyof typeof slogans] || slogans.zh
 
-  const slogans = {
-    "zh-CN": "言启立方于万象，语枢智云守健康",
-    "en-US": "Words Initiate Cube Amid Vast Scenarios, Language Serves as Core, Smart Cloud Guards Health",
-  }
-
-  const variantStyles = {
-    default: "text-base text-muted-foreground",
-    hero: "text-lg md:text-xl text-blue-600 dark:text-blue-400 font-medium",
-    footer: "text-sm text-blue-200/80",
-  }
-
-  return (
-    <p className={cn(variantStyles[variant], className)}>
-      {slogans[language as keyof typeof slogans] || slogans["zh-CN"]}
-    </p>
-  )
+  return <p className={cn("text-muted-foreground font-medium", sizeMap[size], alignMap[align], className)}>{slogan}</p>
 }
+
+export default Slogan

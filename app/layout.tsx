@@ -1,23 +1,16 @@
 import type React from "react"
-import type { Metadata, Viewport } from "next"
-import { Inter, Noto_Sans_SC } from "next/font/google"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { Toaster } from "@/components/ui/toaster"
 import { LanguageProvider } from "@/contexts/language-context"
-import { OfflineNotification } from "@/components/offline-notification"
+import { LoadingProvider } from "@/contexts/loading-context"
+import { UserAvatarProvider } from "@/contexts/user-avatar-context"
+import { AutoTranslationProvider } from "@/contexts/auto-translation-context"
+import { Toaster } from "@/components/ui/toaster"
+import { jsonLd } from "@/lib/seo-config"
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-})
-
-const notoSansSC = Noto_Sans_SC({
-  subsets: ["latin"],
-  variable: "--font-noto-sans-sc",
-  display: "swap",
-})
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: {
@@ -25,46 +18,39 @@ export const metadata: Metadata = {
     template: "%s | YYC³-Med",
   },
   description:
-    "言启立方于万象，语枢智云守健康 - YYC³医疗AI系统提供智能诊断、患者管理、临床决策支持等全方位医疗信息化解决方案。",
+    "AI-powered intelligent medical system providing diagnostic assistance, case analysis, and knowledge graph capabilities",
   keywords: [
-    "YYC³",
-    "言语云³",
-    "医疗AI",
-    "智能诊断",
-    "医疗信息化",
-    "临床决策支持",
-    "远程医疗",
-    "患者管理",
-    "医学影像AI",
-    "电子病历",
-    "医疗大数据",
-    "AI-Powered Medical System",
-    "Intelligent Healthcare",
-    "Medical AI Platform",
+    "Medical AI",
+    "Smart Diagnosis",
+    "Case Analysis",
+    "Knowledge Graph",
+    "Medical System",
+    "Artificial Intelligence",
   ],
-  authors: [{ name: "YYC³医疗科技团队" }],
+  authors: [{ name: "YYC³-Med" }],
   creator: "YYC³-Med",
-  publisher: "言语云³医疗科技",
+  publisher: "YYC³-Med",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://yyc3-med.com"),
+  metadataBase: new URL("https://yyc-med.vercel.app"),
   alternates: {
     canonical: "/",
     languages: {
-      "zh-CN": "/zh-CN",
-      "en-US": "/en-US",
+      "zh-CN": "/zh",
+      "en-US": "/en",
     },
   },
   openGraph: {
     type: "website",
     locale: "zh_CN",
-    url: "https://yyc3-med.com",
+    url: "https://yyc-med.vercel.app",
     title: "YYC³-Med | AI-Powered Intelligent Medical System",
-    description: "言启立方于万象，语枢智云守健康 - 领先的医疗AI智能诊断平台",
-    siteName: "YYC³-Med医疗AI系统",
+    description:
+      "AI-powered intelligent medical system providing diagnostic assistance, case analysis, and knowledge graph capabilities",
+    siteName: "YYC³-Med",
     images: [
       {
         url: "/logo-512.png",
@@ -77,9 +63,10 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "YYC³-Med | AI-Powered Intelligent Medical System",
-    description: "言启立方于万象，语枢智云守健康 - 领先的医疗AI智能诊断平台",
+    description:
+      "AI-powered intelligent medical system providing diagnostic assistance, case analysis, and knowledge graph capabilities",
     images: ["/logo-512.png"],
-    creator: "@yyc3med",
+    creator: "@yyc_med",
   },
   robots: {
     index: true,
@@ -92,27 +79,17 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "your-google-verification-code",
-    yandex: "your-yandex-verification-code",
-    yahoo: "your-yahoo-verification-code",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/logo-192.png",
+    other: {
+      rel: "apple-touch-icon-precomposed",
+      url: "/logo-192.png",
+    },
   },
-  category: "healthcare",
-  classification: "Medical AI Platform",
-  referrer: "origin-when-cross-origin",
-  generator: "YYC³-Med v1.0",
-}
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,
-  userScalable: true,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#2563eb" },
-    { media: "(prefers-color-scheme: dark)", color: "#1d4ed8" },
-  ],
-  colorScheme: "light dark",
+  manifest: "/manifest.json",
+    generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -121,57 +98,21 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="zh-CN" className={`${inter.variable} ${notoSansSC.variable}`}>
+    <html lang="zh-CN" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/logo-192.png" type="image/png" sizes="192x192" />
-        <link rel="apple-touch-icon" href="/logo-192.png" />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="application-name" content="YYC³-Med" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="YYC³-Med" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-config" content="/browserconfig.xml" />
-        <meta name="msapplication-TileColor" content="#2563eb" />
-        <meta name="theme-color" content="#2563eb" />
-
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
-              name: "YYC³-Med医疗AI系统",
-              description: "言启立方于万象，语枢智云守健康 - 领先的医疗AI智能诊断平台，提供全方位医疗信息化解决方案",
-              url: "https://yyc3-med.com",
-              logo: "https://yyc3-med.com/logo-512.png",
-              applicationCategory: "HealthApplication",
-              operatingSystem: "Web",
-              offers: {
-                "@type": "Offer",
-                price: "0",
-                priceCurrency: "CNY",
-              },
-              provider: {
-                "@type": "Organization",
-                name: "YYC³医疗科技",
-                url: "https://yyc3-med.com",
-                slogan: "言启立方于万象，语枢智云守健康",
-              },
-            }),
-          }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body className="min-h-screen bg-background font-sans antialiased">
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <LanguageProvider>
-            <div className="relative flex min-h-screen flex-col">
-              <main className="flex-1">{children}</main>
-            </div>
-            <OfflineNotification />
-            <Toaster />
+            <LoadingProvider>
+              <UserAvatarProvider>
+                <AutoTranslationProvider>
+                  {children}
+                  <Toaster />
+                </AutoTranslationProvider>
+              </UserAvatarProvider>
+            </LoadingProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

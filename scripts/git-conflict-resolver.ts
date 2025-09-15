@@ -1,49 +1,60 @@
-#!/usr/bin/env node
-
 import { execSync } from "child_process"
 import fs from "fs"
 import path from "path"
 
-class GitConflictResolver {
+export class GitConflictResolver {
   private projectRoot: string
 
-  constructor() {
-    this.projectRoot = process.cwd()
+  constructor(projectRoot = process.cwd()) {
+    this.projectRoot = projectRoot
   }
 
   async resolveConflicts(): Promise<void> {
     console.log("🔧 开始解决Git操作冲突...")
 
     try {
-      // 检查Git状态
-      const gitStatus = this.getGitStatus()
-      console.log("📊 Git状态:", gitStatus)
+      // 1. 检查Git状态
+      await this.checkGitStatus()
 
-      // 清理Git锁文件
+      // 2. 清理Git锁文件
       await this.cleanGitLocks()
 
-      // 重置Git状态
+      // 3. 重置Git状态
       await this.resetGitState()
 
-      // 清理工作区
-      await this.cleanWorkspace()
+      // 4. 清理工作区
+      await this.cleanWorkingDirectory()
 
-      console.log("✅ Git冲突解决完成!")
+      console.log("✅ Git冲突解决完成！")
     } catch (error) {
       console.error("❌ Git冲突解决失败:", error)
       throw error
     }
   }
 
-  private getGitStatus(): string {
+  private async checkGitStatus(): Promise<void> {
+    console.log("📊 检查Git状态...")
+
     try {
-      return execSync("git status --porcelain", { encoding: "utf8" })
+      const status = execSync("git status --porcelain", {
+        cwd: this.projectRoot,
+        encoding: "utf-8",
+      })
+
+      if (status.trim()) {
+        console.log("📝 发现未提交的更改:")
+        console.log(status)
+      } else {
+        console.log("✅ 工作区干净")
+      }
     } catch (error) {
-      return "Git状态检查失败"
+      console.log("⚠️ 无法获取Git状态，可能不是Git仓库")
     }
   }
 
   private async cleanGitLocks(): Promise<void> {
+    console.log("🔒 清理Git锁文件...")
+
     const lockFiles = [
       ".git/index.lock",
       ".git/HEAD.lock",
@@ -55,51 +66,103 @@ class GitConflictResolver {
     for (const lockFile of lockFiles) {
       const lockPath = path.join(this.projectRoot, lockFile)
       if (fs.existsSync(lockPath)) {
-        console.log(`🗑️ 删除锁文件: ${lockFile}`)
-        fs.unlinkSync(lockPath)
+        try {
+          fs.unlinkSync(lockPath)
+          console.log(`✅ 删除锁文件: ${lockFile}`)
+        } catch (error) {
+          console.log(`⚠️ 无法删除锁文件: ${lockFile}`)
+        }
       }
     }
   }
 
   private async resetGitState(): Promise<void> {
+    console.log("🔄 重置Git状态...")
+
     try {
-      // 中止任何进行中的操作
-      try {
-        execSync("git merge --abort", { stdio: "ignore" })
-      } catch {}
+      // 中止所有进行中的Git操作
+      const operations = ["merge", "rebase", "cherry-pick", "revert"]
 
-      try {
-        execSync("git rebase --abort", { stdio: "ignore" })
-      } catch {}
-
-      try {
-        execSync("git cherry-pick --abort", { stdio: "ignore" })
-      } catch {}
+      for (const operation of operations) {
+        try {
+          execSync(`git ${operation} --abort`, {
+            cwd: this.projectRoot,
+            stdio: "ignore",
+          })
+          console.log(`✅ 中止${operation}操作`)
+        } catch (error) {
+          // 忽略错误，可能没有进行中的操作
+        }
+      }
 
       // 清理暂存区
-      execSync("git reset HEAD", { stdio: "ignore" })
-
-      console.log("🔄 Git状态重置完成")
+      try {
+        execSync("git reset HEAD", {
+          cwd: this.projectRoot,
+          stdio: "ignore",
+        })
+        console.log("✅ 清理暂存区")
+      } catch (error) {
+        // 忽略错误
+      }
     } catch (error) {
-      console.warn("⚠️ Git状态重置部分失败，继续执行...")
+      console.log("⚠️ 重置Git状态时出现问题")
     }
   }
 
-  private async cleanWorkspace(): Promise<void> {
+  private async cleanWorkingDirectory(): Promise<void> {
+    console.log("🧹 清理工作目录...")
+
     try {
-      // 清理未跟踪的文件
-      execSync("git clean -fd", { stdio: "ignore" })
-      console.log("🧹 工作区清理完成")
+      // 清理未跟踪的文件（谨慎操作）
+      execSync("git clean -fd", {
+        cwd: this.projectRoot,
+        stdio: "ignore",
+      })
+      console.log("✅ 清理未跟踪的文件")
     } catch (error) {
-      console.warn("⚠️ 工作区清理失败，继续执行...")
+      console.log("⚠️ 清理工作目录时出现问题")
     }
   }
-}
 
-// 执行Git冲突解决
-if (require.main === module) {
-  const resolver = new GitConflictResolver()
-  resolver.resolveConflicts().catch(console.error)
-}
+  async checkGitHealth(): Promise<{
+    isGitRepo: boolean
+    hasConflicts: boolean
+    hasUncommittedChanges: boolean
+    hasLockFiles: boolean
+  }> {
+    const result = {
+      isGitRepo: false,
+      hasConflicts: false,
+      hasUncommittedChanges: false,
+      hasLockFiles: false,
+    }
 
-export { GitConflictResolver }
+    try {
+      // 检查是否是Git仓库
+      execSync("git rev-parse --git-dir", {
+        cwd: this.projectRoot,
+        stdio: "ignore",
+      })
+      result.isGitRepo = true
+
+      // 检查是否有冲突
+      const status = execSync("git status --porcelain", {
+        cwd: this.projectRoot,
+        encoding: "utf-8",
+      })
+
+      result.hasUncommittedChanges = status.trim().length > 0
+      result.hasConflicts = status.includes("UU") || status.includes("AA")
+
+      // 检查锁文件
+      const lockFiles = [".git/index.lock", ".git/HEAD.lock", ".git/config.lock"]
+
+      result.hasLockFiles = lockFiles.some((lockFile) => fs.existsSync(path.join(this.projectRoot, lockFile)))
+    } catch (error) {
+      // 不是Git仓库或其他错误
+    }
+
+    return result
+  }
+}

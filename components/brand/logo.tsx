@@ -5,46 +5,42 @@ import { cn } from "@/lib/utils"
 
 interface LogoProps {
   size?: "sm" | "md" | "lg" | "xl"
-  animated?: boolean
   className?: string
   showText?: boolean
+  animated?: boolean
 }
 
-export function Logo({ size = "md", animated = false, className, showText = true }: LogoProps) {
-  const sizeClasses = {
-    sm: "w-8 h-8",
-    md: "w-12 h-12",
-    lg: "w-16 h-16",
-    xl: "w-20 h-20",
-  }
+const sizeMap = {
+  sm: { width: 32, height: 32, textSize: "text-sm" },
+  md: { width: 48, height: 48, textSize: "text-base" },
+  lg: { width: 64, height: 64, textSize: "text-lg" },
+  xl: { width: 80, height: 80, textSize: "text-xl" },
+}
 
-  const textSizes = {
-    sm: "text-sm",
-    md: "text-base",
-    lg: "text-lg",
-    xl: "text-xl",
-  }
+export function Logo({ size = "md", className, showText = false, animated = false }: LogoProps) {
+  const { width, height, textSize } = sizeMap[size]
 
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
-      <div className={cn("relative", sizeClasses[size], animated && "animate-pulse")}>
+    <div className={cn("flex items-center gap-2", className)}>
+      <div className={cn("relative", animated && "animate-pulse")}>
         <Image
-          src="/logo-192.png"
-          alt="YYC³ Logo"
-          width={80}
-          height={80}
-          className="w-full h-full object-contain"
+          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/YYC%C2%B3-%E5%BE%BD%E6%A0%87-D4DNFGgyeOlUR8oO0JVSSVwfJBa92N.png"
+          alt="YYC³-Med Logo"
+          width={width}
+          height={height}
+          className={cn("object-contain", animated && "hover:scale-110 transition-transform duration-300")}
           priority
         />
-        {animated && <div className="absolute inset-0 rounded-full border-2 border-blue-400/30 animate-ping"></div>}
+        {animated && <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping" />}
       </div>
-
       {showText && (
         <div className="flex flex-col">
-          <span className={cn("font-bold text-blue-800 dark:text-blue-200", textSizes[size])}>YYC³-Med</span>
-          <span className={cn("text-xs text-blue-600 dark:text-blue-400", size === "sm" && "hidden")}>言语云³医疗</span>
+          <span className={cn("font-bold text-blue-600", textSize)}>言语云³</span>
+          <span className={cn("text-xs text-muted-foreground")}>YYC³-Med</span>
         </div>
       )}
     </div>
   )
 }
+
+export default Logo
