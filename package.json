@@ -114,7 +114,7 @@
     "recharts": "latest",
     "rimraf": "^5.0.5",
     "sonner": "latest",
-    "tailwind-merge": "^2.5.5",
+    "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "three": "latest",
     "use-sync-external-store": "latest",
