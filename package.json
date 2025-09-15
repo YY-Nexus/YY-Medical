@@ -64,7 +64,7 @@
     "@radix-ui/react-toggle-group": "latest",
     "@radix-ui/react-tooltip": "latest",
     "@react-three/drei": "^9.84.3",
-    "@react-three/fiber": "^8.13.7",
+    "@react-three/fiber": "^9.3.0",
     "@testing-library/dom": "latest",
     "@testing-library/jest-dom": "latest",
     "@testing-library/react": "latest",
