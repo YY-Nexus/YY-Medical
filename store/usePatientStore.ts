@@ -4,11 +4,26 @@ import { immer } from "zustand/middleware/immer"
 interface Patient {
   id: string
   name: string
-  gender: string
+  gender: "男" | "女" | "其他"
   age: number
   medicalRecordNumber: string
   contactInfo: string
-  // 其他患者信息...
+  dateOfBirth?: string
+  emergencyContact?: {
+    name: string
+    relationship: string
+    phone: string
+  }
+  allergies?: string[]
+  chronicConditions?: string[]
+  createdAt?: string
+  updatedAt?: string
+}
+
+interface ApiResponse<T> {
+  data: T
+  success: boolean
+  message?: string
 }
 
 interface PatientState {
@@ -20,8 +35,8 @@ interface PatientState {
   // 操作
   fetchPatients: () => Promise<void>
   fetchPatientById: (id: string) => Promise<void>
-  addPatient: (patient: Omit<Patient, "id">) => Promise<void>
-  updatePatient: (id: string, data: Partial<Patient>) => Promise<void>
+  addPatient: (patient: Omit<Patient, "id" | "createdAt" | "updatedAt">) => Promise<void>
+  updatePatient: (id: string, data: Partial<Omit<Patient, "id">>) => Promise<void>
   deletePatient: (id: string) => Promise<void>
   selectPatient: (id: string | null) => void
   clearError: () => void
@@ -45,7 +60,12 @@ export const usePatientStore = create<PatientState>()(
         const response = await fetch("/api/patients")
 
         if (!response.ok) {
-          throw new Error("获取患者列表失败")
+          const errorMessage = response.status === 404 
+            ? "患者API端点未找到" 
+            : response.status === 500 
+            ? "服务器内部错误" 
+            : `获取患者列表失败 (状态码: ${response.status})`
+          throw new Error(errorMessage)
         }
 
         const data = await response.json()
@@ -57,12 +77,19 @@ export const usePatientStore = create<PatientState>()(
       } catch (error) {
         set((state) => {
           state.isLoading = false
-          state.error = error instanceof Error ? error.message : "获取患者数据时发生错误"
+          state.error = error instanceof Error ? error.message : "获取患者数据时发生未知错误"
         })
       }
     },
 
     fetchPatientById: async (id) => {
+      if (!id) {
+        set((state) => {
+          state.error = "患者ID不能为空"
+        })
+        return
+      }
+
       set((state) => {
         state.isLoading = true
         state.error = null
@@ -73,7 +100,12 @@ export const usePatientStore = create<PatientState>()(
         const response = await fetch(`/api/patients/${id}`)
 
         if (!response.ok) {
-          throw new Error("获取患者详情失败")
+          const errorMessage = response.status === 404 
+            ? "患者不存在" 
+            : response.status === 500 
+            ? "服务器内部错误" 
+            : `获取患者详情失败 (状态码: ${response.status})`
+          throw new Error(errorMessage)
         }
 
         const data = await response.json()
@@ -85,7 +117,7 @@ export const usePatientStore = create<PatientState>()(
       } catch (error) {
         set((state) => {
           state.isLoading = false
-          state.error = error instanceof Error ? error.message : "获取患者详情时发生错误"
+          state.error = error instanceof Error ? error.message : "获取患者详情时发生未知错误"
         })
       }
     },

@@ -1,0 +1,26 @@
+{
+  "name": "@yyc3-med/database-scripts",
+  "version": "1.0.0",
+  "description": "言语云³医疗AI系统数据库脚本工具",
+  "main": "run-sql-scripts.ts",
+  "scripts": {
+    "init": "ts-node run-sql-scripts.ts",
+    "init:create-db": "ts-node run-sql-scripts.ts --create-db",
+    "init:schema-only": "ts-node run-sql-scripts.ts --skip-data",
+    "maintenance": "ts-node -e \"import('./run-sql-scripts').then(m => m.runMaintenance())\"",
+    "backup": "ts-node -e \"import('./run-sql-scripts').then(m => m.runBackup())\"",
+    "health-check": "ts-node -e \"import('./run-sql-scripts').then(m => m.runHealthCheck())\""
+  },
+  "dependencies": {
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.10.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "keywords": ["database", "postgresql", "medical", "ai", "yyc3-med"],
+  "author": "YYC³-Med Team",
+  "license": "MIT"
+}

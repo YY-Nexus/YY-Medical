@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -156,22 +156,53 @@ export function BatchProcessor() {
   
   const { consentGiven, requestConsent } = useAutomaticExecution()
 
+  // 使用 ref 来存储定时器 ID，避免内存泄漏
+  const uploadIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const processIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  // 清理定时器的函数
+  const clearTimers = useCallback(() => {
+    if (uploadIntervalRef.current) {
+      clearInterval(uploadIntervalRef.current)
+      uploadIntervalRef.current = null
+    }
+    if (processIntervalRef.current) {
+      clearInterval(processIntervalRef.current)
+      processIntervalRef.current = null
+    }
+  }, [])
+
+  // 组件卸载时清理定时器
+  useEffect(() => {
+    return () => {
+      clearTimers()
+    }
+  }, [clearTimers])
+
   // 处理文件上传
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files
     if (!fileList || fileList.length === 0) return
 
+    // 清理之前的定时器
+    if (uploadIntervalRef.current) {
+      clearInterval(uploadIntervalRef.current)
+    }
+
     setIsUploading(true)
     setUploadProgress(0)
 
     // 模拟上传进度
-    const interval = setInterval(() => {
+    uploadIntervalRef.current = setInterval(() => {
       setUploadProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(interval)
+          if (uploadIntervalRef.current) {
+            clearInterval(uploadIntervalRef.current)
+            uploadIntervalRef.current = null
+          }
           setTimeout(() => {
-            const newFiles = Array.from(fileList).map((file) => ({
-              id: `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            const newFiles = Array.from(fileList).map((file, index) => ({
+              id: `file-${Date.now()}-${index}`,
               name: file.name,
               type: file.type.includes("image") ? "图片" : "文档",
               size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
@@ -183,7 +214,7 @@ export function BatchProcessor() {
           }, 500)
           return 100
         }
-        return prev + Math.random() * 10
+        return Math.min(prev + Math.random() * 10, 100)
       })
     }, 200)
   }
@@ -232,32 +263,46 @@ export function BatchProcessor() {
     // 模拟处理进度
     let processed = 0
     const totalFiles = files.length
-    const processInterval = setInterval(() => {
+    
+    // 清理之前的处理定时器
+    if (processIntervalRef.current) {
+      clearInterval(processIntervalRef.current)
+    }
+    
+    processIntervalRef.current = setInterval(() => {
       if (processed >= totalFiles) {
-        clearInterval(processInterval)
+        if (processIntervalRef.current) {
+          clearInterval(processIntervalRef.current)
+          processIntervalRef.current = null
+        }
 
         // 更新任务状态
         setCurrentTask((prev) => {
           if (!prev) return null
+          const successFiles = Math.floor(totalFiles * 0.9)
+          const failedFiles = totalFiles - successFiles
           return {
             ...prev,
             status: "已完成",
             completedAt: new Date().toLocaleString(),
             processedFiles: totalFiles,
-            successFiles: Math.floor(totalFiles * 0.9),
-            failedFiles: Math.ceil(totalFiles * 0.1),
+            successFiles,
+            failedFiles,
           }
         })
 
         // 更新文件状态
         setBatchFiles((prev) =>
-          prev.map((file, i) => ({
-            ...file,
-            status: "已处理",
-            result: i % 10 === 9 ? "失败" : "成功",
-            patientName: i % 10 === 9 ? null : `患者${i + 1}`,
-            patientId: i % 10 === 9 ? null : `P-${10000 + i}`,
-          })),
+          prev.map((file, i) => {
+            const isFailure = i % 10 === 9 // 10% 失败率
+            return {
+              ...file,
+              status: "已处理",
+              result: isFailure ? "失败" : "成功",
+              patientName: isFailure ? null : `患者${i + 1}`,
+              patientId: isFailure ? null : `P-${10000 + i}`,
+            }
+          }),
         )
 
         setIsProcessing(false)
@@ -272,24 +317,28 @@ export function BatchProcessor() {
       // 更新任务状态
       setCurrentTask((prev) => {
         if (!prev) return null
+        const successFiles = Math.floor(processed * 0.9)
+        const failedFiles = processed - successFiles
         return {
           ...prev,
           processedFiles: processed,
-          successFiles: Math.floor(processed * 0.9),
-          failedFiles: Math.ceil(processed * 0.1),
+          successFiles,
+          failedFiles,
         }
       })
 
       // 更新文件状态
       setBatchFiles((prev) => {
         const newFiles = [...prev]
-        if (newFiles[processed - 1]) {
-          newFiles[processed - 1] = {
-            ...newFiles[processed - 1],
+        const fileIndex = processed - 1
+        if (newFiles[fileIndex]) {
+          const isFailure = fileIndex % 10 === 9 // 10% 失败率
+          newFiles[fileIndex] = {
+            ...newFiles[fileIndex],
             status: "已处理",
-            result: (processed - 1) % 10 === 9 ? "失败" : "成功",
-            patientName: (processed - 1) % 10 === 9 ? null : `患者${processed}`,
-            patientId: (processed - 1) % 10 === 9 ? null : `P-${10000 + processed - 1}`,
+            result: isFailure ? "失败" : "成功",
+            patientName: isFailure ? null : `患者${processed}`,
+            patientId: isFailure ? null : `P-${10000 + fileIndex}`,
           }
         }
         return newFiles

@@ -1,50 +1,46 @@
 "use client"
 
-import { Shield } from "lucide-react"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 interface LogoProps {
   size?: "sm" | "md" | "lg" | "xl"
-  animated?: boolean
   className?: string
+  showText?: boolean
+  animated?: boolean
 }
 
-export function Logo({ size = "md", animated = false, className }: LogoProps) {
-  const sizeClasses = {
-    sm: "w-8 h-8",
-    md: "w-12 h-12",
-    lg: "w-16 h-16",
-    xl: "w-20 h-20",
-  }
+const sizeMap = {
+  sm: { width: 32, height: 32, textSize: "text-sm" },
+  md: { width: 48, height: 48, textSize: "text-base" },
+  lg: { width: 64, height: 64, textSize: "text-lg" },
+  xl: { width: 80, height: 80, textSize: "text-xl" },
+}
 
-  const iconSizes = {
-    sm: "h-4 w-4",
-    md: "h-6 w-6",
-    lg: "h-8 w-8",
-    xl: "h-10 w-10",
-  }
+export function Logo({ size = "md", className, showText = false, animated = false }: LogoProps) {
+  const { width, height, textSize } = sizeMap[size]
 
   return (
-    <div
-      className={cn(
-        "relative flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-lg",
-        sizeClasses[size],
-        animated && "animate-pulse",
-        className,
+    <div className={cn("flex items-center gap-2", className)}>
+      <div className={cn("relative", animated && "animate-pulse")}>
+        <Image
+          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/YYC%C2%B3-%E5%BE%BD%E6%A0%87-D4DNFGgyeOlUR8oO0JVSSVwfJBa92N.png"
+          alt="YYC³-Med Logo"
+          width={width}
+          height={height}
+          className={cn("object-contain", animated && "hover:scale-110 transition-transform duration-300")}
+          priority
+        />
+        {animated && <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping" />}
+      </div>
+      {showText && (
+        <div className="flex flex-col">
+          <span className={cn("font-bold text-blue-600", textSize)}>言语云³</span>
+          <span className={cn("text-xs text-muted-foreground")}>YYC³-Med</span>
+        </div>
       )}
-    >
-      {/* 背景光晕效果 */}
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-400 opacity-75 blur-sm"></div>
-
-      {/* 主图标 */}
-      <Shield className={cn("relative z-10 text-white drop-shadow-sm", iconSizes[size])} />
-
-      {/* 装饰性小点 */}
-      <div className="absolute top-1 right-1 w-1 h-1 bg-white rounded-full opacity-80"></div>
-      <div className="absolute bottom-1 left-1 w-0.5 h-0.5 bg-white rounded-full opacity-60"></div>
-
-      {/* 动画光环 */}
-      {animated && <div className="absolute inset-0 rounded-xl border-2 border-white/30 animate-ping"></div>}
     </div>
   )
 }
+
+export default Logo
