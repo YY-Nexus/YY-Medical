@@ -1,10 +1,9 @@
 name: CI/CD Pipeline
-
 on:
   push:
-    branches: ["main"]
+    branches: ['main']
   pull_request:
-    branches: ["main"]
+    branches: ['main']
 
 jobs:
   install-build-test:
@@ -36,24 +35,3 @@ jobs:
         with:
           name: build-artifacts
           path: .next
-
-  notify-on-failure:
-    runs-on: ubuntu-latest
-    needs: install-build-test
-    if: failure()
-    steps:
-      - name: Send email on failure
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.0379.email
-          server_port: 465
-          username: admin@0379.email
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "[CI/CD] 构建或安全检查失败通知"
-          to: admin@0379.email
-          from: admin@0379.email
-          body: |
-            CI/CD 构建或安全检查失败，请及时登录 GitHub 查看详情。
-            仓库: ${{ github.repository }}
-            分支: ${{ github.ref }}
-            详情: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
