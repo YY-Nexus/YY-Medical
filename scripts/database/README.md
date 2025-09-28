@@ -22,6 +22,7 @@ scripts/database/
 ### 1. 环境准备
 
 确保系统已安装以下软件：
+
 - Node.js (v16+)
 - PostgreSQL (v12+)
 - npm 或 yarn
@@ -31,7 +32,9 @@ scripts/database/
 在项目根目录创建 `.env` 文件：
 
 \`\`\`bash
+
 # 数据库配置
+
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=yyc3_med
@@ -45,29 +48,38 @@ DB_SSL=false
 #### 方法一：使用 Bash 脚本（推荐）
 
 \`\`\`bash
+
 # 基本初始化
+
 ./init-database.sh
 
 # 创建数据库并初始化
+
 ./init-database.sh --create-db
 
 # 备份现有数据后初始化
+
 ./init-database.sh --backup --force
 
 # 只创建表结构，跳过数据插入
+
 ./init-database.sh --skip-data
 \`\`\`
 
 #### 方法二：使用 Node.js 脚本
 
 \`\`\`bash
+
 # 安装依赖
+
 npm install
 
 # 执行初始化
+
 npm run init
 
 # 或直接运行
+
 ts-node run-sql-scripts.ts
 \`\`\`
 
@@ -102,42 +114,49 @@ ts-node run-sql-scripts.ts
 系统提供了多个维护存储过程：
 
 ### 数据清理
+
 \`\`\`sql
 SELECT cleanup_old_data();
 \`\`\`
 清理90天前的系统日志和30天前的已读通知。
 
 ### 性能优化
+
 \`\`\`sql
 SELECT optimize_database_performance();
 \`\`\`
 更新统计信息、重建索引、清理死元组。
 
 ### 数据完整性检查
+
 \`\`\`sql
 SELECT * FROM check_patient_data_integrity();
 \`\`\`
 检查患者数据、医疗记录、预约的完整性。
 
 ### AI诊断统计
+
 \`\`\`sql
 SELECT * FROM get_ai_diagnosis_statistics();
 \`\`\`
 获取AI诊断模型的准确性和性能统计。
 
 ### 用户活跃度统计
+
 \`\`\`sql
 SELECT * FROM get_user_activity_statistics(30);
 \`\`\`
 获取最近30天的用户活跃度统计。
 
 ### 数据库健康检查
+
 \`\`\`sql
 SELECT * FROM database_health_check();
 \`\`\`
 全面的数据库健康状态检查。
 
 ### 患者数据导出
+
 \`\`\`sql
 SELECT export_patient_data('patient-uuid-here');
 \`\`\`
@@ -170,43 +189,56 @@ SELECT export_patient_data('patient-uuid-here');
 ### 1. 全新安装
 
 \`\`\`bash
+
 # 创建数据库并完整初始化
+
 ./init-database.sh --create-db
 
 # 验证安装
+
 psql -h localhost -U postgres -d yyc3_med -c "SELECT COUNT(*) FROM users;"
 \`\`\`
 
 ### 2. 开发环境重置
 
 \`\`\`bash
+
 # 备份现有数据
+
 ./init-database.sh --backup
 
 # 重新初始化（保留数据库）
+
 ./init-database.sh --force
 \`\`\`
 
 ### 3. 生产环境部署
 
 \`\`\`bash
+
 # 只创建表结构
+
 ./init-database.sh --skip-data --no-verify
 
 # 手动导入生产数据
+
 psql -h localhost -U postgres -d yyc3_med < production_data.sql
 \`\`\`
 
 ### 4. 定期维护
 
 \`\`\`bash
+
 # 执行数据清理
+
 psql -h localhost -U postgres -d yyc3_med -c "SELECT cleanup_old_data();"
 
 # 性能优化
+
 psql -h localhost -U postgres -d yyc3_med -c "SELECT optimize_database_performance();"
 
 # 健康检查
+
 psql -h localhost -U postgres -d yyc3_med -c "SELECT * FROM database_health_check();"
 \`\`\`
 
@@ -249,14 +281,14 @@ psql -h localhost -U postgres -d yyc3_med -c "SELECT * FROM database_health_chec
 
 \`\`\`sql
 -- 查看最近的错误日志
-SELECT * FROM system_logs 
-WHERE status = 'failure' 
-ORDER BY created_at DESC 
+SELECT * FROM system_logs
+WHERE status = 'failure'
+ORDER BY created_at DESC
 LIMIT 10;
 
 -- 查看数据库操作日志
-SELECT * FROM system_logs 
-WHERE action LIKE '%database%' 
+SELECT * FROM system_logs
+WHERE action LIKE '%database%'
 ORDER BY created_at DESC;
 \`\`\`
 
@@ -265,17 +297,22 @@ ORDER BY created_at DESC;
 ### 创建备份
 
 \`\`\`bash
+
 # 使用pg_dump创建备份
+
 pg_dump -h localhost -U postgres yyc3_med > backup_$(date +%Y%m%d).sql
 
 # 或使用脚本自动备份
+
 ./init-database.sh --backup
 \`\`\`
 
 ### 恢复数据
 
 \`\`\`bash
+
 # 从备份恢复
+
 psql -h localhost -U postgres yyc3_med < backup_20240115.sql
 \`\`\`
 
@@ -321,9 +358,10 @@ CREATE INDEX idx_medical_records_patient_date ON medical_records(patient_id, vis
 ## 联系支持
 
 如遇到问题，请联系：
-- 技术支持：tech-support@yyc3med.com
-- 开发团队：dev-team@yyc3med.com
-- 文档反馈：docs@yyc3med.com
+
+- 技术支持：<tech-support@yyc3med.com>
+- 开发团队：<dev-team@yyc3med.com>
+- 文档反馈：<docs@yyc3med.com>
 
 ---
 

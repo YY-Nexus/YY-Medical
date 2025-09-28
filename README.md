@@ -27,7 +27,9 @@ chmod +x scripts/setup-dev.sh
 3. **配置环境变量**
 \`\`\`bash
 cp .env.local.example .env.local
+
 # 编辑 .env.local 文件，填入正确的配置值
+
 \`\`\`
 
 4. **启动开发服务器**
@@ -40,16 +42,21 @@ npm run dev
 如果自动脚本失败，可以手动执行：
 
 \`\`\`bash
+
 # 安装依赖
+
 npm install
 
 # 检查依赖
+
 node scripts/check-dependencies.js
 
 # 类型检查
+
 npm run type-check
 
 # 启动开发服务器
+
 npm run dev
 \`\`\`
 
@@ -82,25 +89,31 @@ yanyu-medical-ai-system/
 ## 🛠️ 开发命令
 
 \`\`\`bash
+
 # 开发
+
 npm run dev              # 启动开发服务器
 npm run build            # 构建生产版本
 npm run start            # 启动生产服务器
 
 # 代码质量
+
 npm run lint             # 代码检查
 npm run lint:fix         # 自动修复代码问题
 npm run type-check       # TypeScript类型检查
 
 # 测试
+
 npm run test             # 运行测试
 npm run test:watch       # 监听模式运行测试
 
 # 文档
+
 npm run storybook        # 启动组件文档
 npm run build-storybook  # 构建组件文档
 
 # 工具
+
 npm run clean            # 清理缓存
 npm run install:clean    # 重新安装依赖
 npm run analyze          # 分析打包大小
@@ -134,6 +147,7 @@ npm run analyze          # 分析打包大小
 ## 🏥 功能模块
 
 ### 核心功能
+
 - 🔐 用户认证与授权
 - 📋 医疗记录管理
 - 🤖 AI智能诊断
@@ -142,6 +156,7 @@ npm run analyze          # 分析打包大小
 - 💊 药物管理
 
 ### 高级功能
+
 - 🔒 安全与合规
 - 📱 移动端支持
 - 🌐 多语言支持
@@ -169,6 +184,7 @@ npm run analyze          # 分析打包大小
 ## 🌐 国际化
 
 支持多语言：
+
 - 中文（简体）
 - 英文
 - 自动翻译功能
@@ -191,10 +207,13 @@ npm run analyze          # 分析打包大小
 ### 手动部署
 
 \`\`\`bash
+
 # 构建
+
 npm run build
 
 # 启动
+
 npm run start
 \`\`\`
 
@@ -213,6 +232,7 @@ MIT License
 ## 📞 支持
 
 如有问题，请联系：
-- 邮箱: admin@0379.email
+
+- 邮箱: <admin@0379.email>
 - 文档: [项目文档](./docs/)
 - Issues: [GitHub Issues](./issues)

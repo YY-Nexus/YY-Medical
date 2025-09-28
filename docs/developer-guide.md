@@ -1,6 +1,7 @@
 # 言语「医枢³」智能诊疗系统 - 开发者技术文档
 
 ## 目录
+
 1. [系统概述](#系统概述)
 2. [技术栈](#技术栈)
 3. [核心功能模块](#核心功能模块)
@@ -17,6 +18,7 @@
 言语「医枢³」智能诊疗系统是一个基于 Next.js 14 的现代化医疗AI管理平台，集成了智能诊断、患者管理、临床决策支持、医学研究等多个核心功能模块。
 
 ### 核心特性
+
 - 🤖 AI驱动的智能诊断系统
 - 👥 全面的患者管理功能
 - 🏥 临床决策支持系统
@@ -29,6 +31,7 @@
 ## 技术栈
 
 ### 前端技术栈
+
 \`\`\`json
 {
   "framework": "Next.js 14.0.4",
@@ -44,6 +47,7 @@
 \`\`\`
 
 ### 后端技术栈
+
 \`\`\`json
 {
   "runtime": "Node.js >=22.0.0",
@@ -56,6 +60,7 @@
 \`\`\`
 
 ### 开发工具
+
 \`\`\`json
 {
   "package_manager": "npm >=10.0.0",
@@ -69,6 +74,7 @@
 ## 核心功能模块
 
 ### 1. 智能诊断模块 (AI Diagnosis)
+
 \`\`\`typescript
 // 核心功能
 interface AIDiagnosisModule {
@@ -92,6 +98,7 @@ const aiDiagnosisPaths = {
 \`\`\`
 
 ### 2. 患者管理模块 (Patient Management)
+
 \`\`\`typescript
 interface PatientManagementModule {
   patientList: string;          // 患者列表
@@ -109,6 +116,7 @@ const patientPaths = {
 \`\`\`
 
 ### 3. 临床决策模块 (Clinical Decision)
+
 \`\`\`typescript
 interface ClinicalDecisionModule {
   decisionSupport: string;      // 决策支持
@@ -126,6 +134,7 @@ const clinicalPaths = {
 \`\`\`
 
 ### 4. 药物管理模块 (Medication Management)
+
 \`\`\`typescript
 interface MedicationModule {
   drugCatalog: string;          // 药品目录
@@ -136,6 +145,7 @@ interface MedicationModule {
 \`\`\`
 
 ### 5. 健康数据模块 (Health Data)
+
 \`\`\`typescript
 interface HealthDataModule {
   vitalSigns: string;           // 生命体征
@@ -146,6 +156,7 @@ interface HealthDataModule {
 \`\`\`
 
 ### 6. 医学研究模块 (Medical Research)
+
 \`\`\`typescript
 interface ResearchModule {
   researchProjects: string;     // 研究项目
@@ -156,6 +167,7 @@ interface ResearchModule {
 \`\`\`
 
 ### 7. 资质验证模块 (Certification)
+
 \`\`\`typescript
 interface CertificationModule {
   overview: string;             // 资质概览
@@ -168,6 +180,7 @@ interface CertificationModule {
 \`\`\`
 
 ### 8. 数据安全模块 (Security)
+
 \`\`\`typescript
 interface SecurityModule {
   overview: string;             // 安全概览
@@ -181,6 +194,7 @@ interface SecurityModule {
 ## 项目架构
 
 ### 整体架构图
+
 \`\`\`
 ┌─────────────────────────────────────────────────────────────┐
 │                    前端层 (Frontend)                        │
@@ -222,6 +236,7 @@ interface SecurityModule {
 \`\`\`
 
 ### 组件架构
+
 \`\`\`
 components/
 ├── ui/                     # 基础UI组件
@@ -247,67 +262,84 @@ components/
 ## 环境变量配置
 
 ### 开发环境 (.env.local)
+
 \`\`\`bash
+
 # 应用配置
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+NEXT_PUBLIC_APP_URL=<http://localhost:3000>
 NEXT_PUBLIC_APP_VERSION=1.0.0
 NEXT_PUBLIC_APP_NAME="YanYu MediNexus³"
 
 # API配置
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
+
+NEXT_PUBLIC_API_BASE_URL=<http://localhost:3000/api>
 API_SECRET_KEY=your-secret-key-here
 
 # AI服务配置
+
 DEEPSEEK_API_KEY=your-deepseek-api-key
-DEEPSEEK_BASE_URL=https://api.deepseek.com
+DEEPSEEK_BASE_URL=<https://api.deepseek.com>
 OPENAI_API_KEY=your-openai-api-key
 
 # 认证配置
+
 JWT_SECRET=your-jwt-secret-key
 JWT_EXPIRES_IN=7d
 REFRESH_TOKEN_EXPIRES_IN=30d
 
 # 数据库配置
+
 DATABASE_URL=your-database-url
 REDIS_URL=your-redis-url
 
 # 文件存储配置
+
 UPLOAD_MAX_SIZE=10485760  # 10MB
 ALLOWED_FILE_TYPES=jpg,jpeg,png,pdf,doc,docx
 
 # 邮件服务配置
+
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
+SMTP_USER=<your-email@gmail.com>
 SMTP_PASS=your-email-password
 
 # 第三方服务配置
+
 SENTRY_DSN=your-sentry-dsn
 ANALYTICS_ID=your-analytics-id
 
 # 功能开关
+
 FEATURE_AI_DIAGNOSIS=true
 FEATURE_TELEMEDICINE=true
 FEATURE_RESEARCH_MODULE=true
 \`\`\`
 
 ### 生产环境 (.env.production)
+
 \`\`\`bash
+
 # 应用配置
-NEXT_PUBLIC_APP_URL=https://your-domain.com
+
+NEXT_PUBLIC_APP_URL=<https://your-domain.com>
 NEXT_PUBLIC_APP_VERSION=1.0.0
 NODE_ENV=production
 
 # 安全配置
+
 SECURE_COOKIES=true
 CSRF_PROTECTION=true
 RATE_LIMIT_ENABLED=true
 
 # 性能配置
+
 CACHE_TTL=3600
-CDN_URL=https://cdn.your-domain.com
+CDN_URL=<https://cdn.your-domain.com>
 
 # 监控配置
+
 LOG_LEVEL=error
 MONITORING_ENABLED=true
 \`\`\`
@@ -315,6 +347,7 @@ MONITORING_ENABLED=true
 ## 文件结构
 
 ### 完整目录结构
+
 \`\`\`
 ai-medical-system/
 ├── app/                           # Next.js 14 App Router
@@ -1008,18 +1041,19 @@ ai-medical-system/
 ## API 接口
 
 ### 认证相关API
+
 \`\`\`typescript
 // 用户登录
 POST /api/auth/login
 {
-  "email": "user@example.com",
+  "email": "<user@example.com>",
   "password": "password123"
 }
 
 // 用户注册
 POST /api/auth/register
 {
-  "email": "user@example.com",
+  "email": "<user@example.com>",
   "password": "password123",
   "name": "用户名",
   "role": "doctor"
@@ -1034,13 +1068,14 @@ POST /api/auth/refresh
 // 重置密码
 POST /api/auth/reset-password
 {
-  "email": "user@example.com",
+  "email": "<user@example.com>",
   "newPassword": "newpassword123",
   "resetToken": "reset_token_here"
 }
 \`\`\`
 
 ### 患者管理API
+
 \`\`\`typescript
 // 获取患者列表
 GET /api/patients?page=1&limit=10&search=关键词
@@ -1055,7 +1090,7 @@ POST /api/patients
   "age": 30,
   "gender": "male",
   "phone": "13800138000",
-  "email": "patient@example.com"
+  "email": "<patient@example.com>"
 }
 
 // 更新患者信息
@@ -1070,6 +1105,7 @@ DELETE /api/patients/[id]
 \`\`\`
 
 ### AI诊断API
+
 \`\`\`typescript
 // 创建诊断
 POST /api/diagnoses
@@ -1088,6 +1124,7 @@ GET /api/diagnoses?patientId=patient_id&page=1&limit=10
 \`\`\`
 
 ### AI模型管理API
+
 \`\`\`typescript
 // 获取模型列表
 GET /api/models
@@ -1115,6 +1152,7 @@ POST /api/models/[id]/deploy
 \`\`\`
 
 ### 翻译API
+
 \`\`\`typescript
 // 单个文本翻译
 POST /api/translate
@@ -1134,6 +1172,7 @@ POST /api/translate/batch
 \`\`\`
 
 ### 系统检查API
+
 \`\`\`typescript
 // 系统整体检查
 GET /api/admin/checks
@@ -1151,6 +1190,7 @@ GET /api/admin/checks/security
 ## 数据库设计
 
 ### 用户表 (users)
+
 \`\`\`sql
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1168,6 +1208,7 @@ CREATE TABLE users (
 \`\`\`
 
 ### 患者表 (patients)
+
 \`\`\`sql
 CREATE TABLE patients (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1187,6 +1228,7 @@ CREATE TABLE patients (
 \`\`\`
 
 ### 诊断记录表 (diagnoses)
+
 \`\`\`sql
 CREATE TABLE diagnoses (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1205,6 +1247,7 @@ CREATE TABLE diagnoses (
 \`\`\`
 
 ### AI模型表 (ai_models)
+
 \`\`\`sql
 CREATE TABLE ai_models (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1224,6 +1267,7 @@ CREATE TABLE ai_models (
 \`\`\`
 
 ### 权限表 (permissions)
+
 \`\`\`sql
 CREATE TABLE permissions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1236,6 +1280,7 @@ CREATE TABLE permissions (
 \`\`\`
 
 ### 角色表 (roles)
+
 \`\`\`sql
 CREATE TABLE roles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1248,6 +1293,7 @@ CREATE TABLE roles (
 \`\`\`
 
 ### 用户角色关联表 (user_roles)
+
 \`\`\`sql
 CREATE TABLE user_roles (
   user_id UUID REFERENCES users(id),
@@ -1258,6 +1304,7 @@ CREATE TABLE user_roles (
 \`\`\`
 
 ### 审计日志表 (audit_logs)
+
 \`\`\`sql
 CREATE TABLE audit_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1275,50 +1322,71 @@ CREATE TABLE audit_logs (
 ## 部署指南
 
 ### 本地开发环境
+
 \`\`\`bash
+
 # 1. 克隆项目
+
 git clone <repository-url>
 cd ai-medical-system
 
 # 2. 安装依赖
+
 npm install
 
 # 3. 配置环境变量
+
 cp .env.local.example .env.local
+
 # 编辑 .env.local 文件，填入相应的配置
 
 # 4. 启动开发服务器
+
 npm run dev
 
 # 5. 访问应用
-# 打开浏览器访问 http://localhost:3000
+
+# 打开浏览器访问 <http://localhost:3000>
+
 \`\`\`
 
 ### Vercel部署
+
 \`\`\`bash
+
 # 1. 安装Vercel CLI
+
 npm i -g vercel
 
 # 2. 登录Vercel
+
 vercel login
 
 # 3. 部署项目
+
 vercel
 
 # 4. 配置环境变量
+
 # 在Vercel Dashboard中配置生产环境变量
 
 # 5. 自动部署
+
 # 推送到main分支会自动触发部署
+
 git push origin main
 \`\`\`
 
 ### Docker部署
+
 \`\`\`dockerfile
+
 # Dockerfile
+
 FROM node:22-alpine AS base
 
 # Install dependencies only when needed
+
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -1327,6 +1395,7 @@ COPY package.json package-lock.json* ./
 RUN npm ci
 
 # Rebuild the source code only when needed
+
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -1335,6 +1404,7 @@ COPY . .
 RUN npm run build
 
 # Production image, copy all the files and run next
+
 FROM base AS runner
 WORKDIR /app
 
@@ -1358,7 +1428,9 @@ CMD ["node", "server.js"]
 \`\`\`
 
 \`\`\`yaml
+
 # docker-compose.yml
+
 version: '3.8'
 services:
   app:
@@ -1397,28 +1469,40 @@ volumes:
 \`\`\`
 
 ### 生产环境配置
+
 \`\`\`bash
+
 # 1. 服务器配置
-# 确保服务器满足以下要求：
+
+# 确保服务器满足以下要求
+
 # - Node.js >= 22.0.0
+
 # - npm >= 10.0.0
+
 # - 至少 2GB RAM
+
 # - 至少 10GB 存储空间
 
 # 2. 环境变量配置
+
 # 配置生产环境的环境变量
+
 export NODE_ENV=production
 export DATABASE_URL="postgresql://user:password@localhost:5432/medical_system"
 export JWT_SECRET="your-production-jwt-secret"
 export REDIS_URL="redis://localhost:6379"
 
 # 3. 构建应用
+
 npm run build
 
 # 4. 启动应用
+
 npm start
 
 # 5. 使用PM2管理进程
+
 npm install -g pm2
 pm2 start npm --name "medical-system" -- start
 pm2 startup
@@ -1428,6 +1512,7 @@ pm2 save
 ## 开发规范
 
 ### 代码规范
+
 \`\`\`typescript
 // 1. 文件命名规范
 // - 组件文件使用 PascalCase: UserProfile.tsx
@@ -1447,7 +1532,7 @@ export function ComponentName({ title, isVisible = false, onClose }: ComponentPr
   // 组件实现
   return (
     <div className="component-container">
-      {/* JSX内容 */}
+      {/*JSX内容*/}
     </div>
   );
 }
@@ -1485,11 +1570,15 @@ export interface ApiResponse<T> {
 \`\`\`
 
 ### Git提交规范
+
 \`\`\`bash
+
 # 提交信息格式
+
 <type>(<scope>): <subject>
 
 # 类型说明
+
 feat:     新功能
 fix:      修复bug
 docs:     文档更新
@@ -1499,6 +1588,7 @@ test:     测试相关
 chore:    构建过程或辅助工具的变动
 
 # 示 修复bug
+
 docs: 文档更新
 style: 代码格式调整
 refactor: 代码重构
@@ -1506,6 +1596,7 @@ test: 测试相关
 chore: 构建过程或辅助工具的变动
 
 # 示例
+
 feat(auth): 添加用户登录功能
 fix(ui): 修复按钮样式问题
 docs(api): 更新API文档
@@ -1515,13 +1606,14 @@ chore(deps): 更新依赖包版本
 \`\`\`
 
 ### CSS/样式规范
+
 \`\`\`css
-/* 1. 使用Tailwind CSS类名 */
+/*1. 使用Tailwind CSS类名*/
 .medical-card {
   @apply bg-white rounded-lg shadow-md p-6 border border-gray-200;
 }
 
-/* 2. 自定义CSS变量 */
+/*2. 自定义CSS变量*/
 :root {
   --color-primary: #3b82f6;
   --color-secondary: #64748b;
@@ -1535,12 +1627,12 @@ chore(deps): 更新依赖包版本
   --spacing-xl: 2rem;
 }
 
-/* 3. 响应式设计 */
+/*3. 响应式设计*/
 .responsive-grid {
   @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
 }
 
-/* 4. 动画效果 */
+/*4. 动画效果*/
 .fade-in {
   @apply opacity-0 animate-in fade-in duration-300;
 }
@@ -1551,6 +1643,7 @@ chore(deps): 更新依赖包版本
 \`\`\`
 
 ### 测试规范
+
 \`\`\`typescript
 // 1. 单元测试示例
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -1565,7 +1658,7 @@ describe('Button Component', () => {
   it('calls onClick handler when clicked', () => {
     const handleClick = jest.fn();
     render(<Button onClick={handleClick}>Click me</Button>);
-    
+
     fireEvent.click(screen.getByText('Click me'));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -1600,7 +1693,7 @@ import { test, expect } from '@playwright/test';
 test('user can login and access dashboard', async ({ page }) => {
   await page.goto('/login');
   
-  await page.fill('[data-testid="email"]', 'test@example.com');
+  await page.fill('[data-testid="email"]', '<test@example.com>');
   await page.fill('[data-testid="password"]', 'password123');
   await page.click('[data-testid="login-button"]');
   
@@ -1610,6 +1703,7 @@ test('user can login and access dashboard', async ({ page }) => {
 \`\`\`
 
 ### 性能优化规范
+
 \`\`\`typescript
 // 1. 组件懒加载
 import { lazy, Suspense } from 'react';
@@ -1675,13 +1769,14 @@ function usePatients() {
   return useQuery({
     queryKey: ['patients'],
     queryFn: () => fetch('/api/patients').then(res => res.json()),
-    staleTime: 5 * 60 * 1000, // 5分钟
-    cacheTime: 10 * 60 * 1000, // 10分钟
+    staleTime: 5 *60* 1000, // 5分钟
+    cacheTime: 10 *60* 1000, // 10分钟
   });
 }
 \`\`\`
 
 ### 安全规范
+
 \`\`\`typescript
 // 1. 输入验证
 import { z } from 'zod';
@@ -1728,7 +1823,7 @@ async function secureApiCall(data: any) {
 function requirePermission(permission: string) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
-    
+
     descriptor.value = function (...args: any[]) {
       if (!hasPermission(permission)) {
         throw new Error('Insufficient permissions');
@@ -1752,6 +1847,7 @@ class PatientService {
 \`\`\`
 
 ### 错误处理规范
+
 \`\`\`typescript
 // 1. 全局错误边界
 import { ErrorBoundary } from 'react-error-boundary';
@@ -1795,7 +1891,7 @@ class ApiError extends Error {
 async function apiCall(url: string, options?: RequestInit) {
   try {
     const response = await fetch(url, options);
-    
+
     if (!response.ok) {
       throw new ApiError(
         `API call failed: ${response.statusText}`,
@@ -1808,7 +1904,7 @@ async function apiCall(url: string, options?: RequestInit) {
     if (error instanceof ApiError) {
       throw error;
     }
-    
+
     throw new ApiError('Network error', 0);
   }
 }
@@ -1858,6 +1954,7 @@ function handleError(error: Error) {
 \`\`\`
 
 ### 国际化规范
+
 \`\`\`typescript
 // 1. 翻译文件结构
 // i18n/zh-CN.json
@@ -1905,13 +2002,14 @@ function DynamicMessage({ count }: { count: number }) {
   return (
     <p>
       {t('patients.count', { count })}
-      {/* 输出: "共有 5 位患者" */}
+      {/*输出: "共有 5 位患者"*/}
     </p>
   );
 }
 \`\`\`
 
 ### 监控和日志规范
+
 \`\`\`typescript
 // 1. 性能监控
 import { performance } from 'perf_hooks';
@@ -1919,7 +2017,7 @@ import { performance } from 'perf_hooks';
 function measurePerformance(name: string) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
       const start = performance.now();
       
@@ -2027,7 +2125,7 @@ function PatientForm() {
       patientId: data.id,
       source: 'form',
     });
-    
+
     logger.info('Patient created successfully', {
       patientId: data.id,
       patientName: data.name,
@@ -2036,7 +2134,7 @@ function PatientForm() {
   
   return (
     <form onSubmit={handleSubmit}>
-      {/* 表单内容 */}
+      {/*表单内容*/}
     </form>
   );
 }

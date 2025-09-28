@@ -53,8 +53,8 @@
 4. **重导出**: 使用桶文件 (barrel files) 简化导入
    \`\`\`tsx
    // components/index.ts
-   export * from './Button';
-   export * from './Card';
+   export *from './Button';
+   export* from './Card';
    export * from './Input';
    \`\`\`
 
@@ -72,17 +72,17 @@
    // 第三方库
    import { useState, useEffect } from 'react';
    import { useRouter } from 'next/router';
-   
+
    // 绝对路径导入
    import { Button } from '@/components/ui';
    import { useAuth } from '@/hooks';
-   
+
    // 相对路径导入
    import { PatientCard } from '../PatientCard';
-   
+
    // 类型导入
    import type { Patient } from '@/types';
-   
+
    // 样式导入
    import './styles.css';
    \`\`\`
