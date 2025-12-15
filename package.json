@@ -96,7 +96,7 @@
     "jsonwebtoken": "latest",
     "jspdf": "latest",
     "jspdf-autotable": "latest",
-    "lucide-react": "^0.454.0",
+    "lucide-react": "^0.561.0",
     "next": "^15.5.3",
     "next-themes": "latest",
     "node-notifier": "latest",
