@@ -96,8 +96,8 @@
     "jsonwebtoken": "latest",
     "jspdf": "latest",
     "jspdf-autotable": "latest",
-    "lucide-react": "^0.454.0",
-    "next": "^15.5.9",
+    "lucide-react": "^0.561.0",
+    "next": "^15.5.3",
     "next-themes": "latest",
     "node-notifier": "latest",
     "path": "latest",
@@ -125,7 +125,7 @@
     "zustand": "latest"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/node": "^24",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^8.46.1",
